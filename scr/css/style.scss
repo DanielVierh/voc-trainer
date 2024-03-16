@@ -6,6 +6,7 @@ $main-color: rgb(12, 12, 115);
 $secondary-color: lightblue;
 
 // Z-Index
+$z-homepage: 1;
 $z-footer-nav: 9999999;
 
 * {
@@ -19,9 +20,62 @@ body {
     font-family: sans-serif;
     background: linear-gradient(to top, black, $main-color);
     background-repeat: no-repeat;
-    height: 100vh;
 }
 
+//////////////////////////////////
+///* Footer Nav
+//////////////////////////////////
+.home {
+    z-index: $z-homepage;
+    overflow-y: scroll;
+    padding: 50px 0 100px 0;
+    text-align: center;
+    width: 100%;
+    height: 100vh;
+
+    h1 {
+        color: white;
+    }
+
+    .languageContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+
+.languageBtn {
+    text-decoration: none;
+    color: black;
+    font-size: 1.5em;
+    height: 40px;
+    margin-top: 40px;
+    font-weight: bold;
+    background-color: rgb(185, 184, 184);
+    width: 260px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 20px black;
+    transition: all .4s ease;
+
+    &:hover {
+        box-shadow: 0 0 5px black;
+    }
+
+}
+
+
+.button-add {
+    background-color: blue;
+    color: white;
+   margin: 50px auto;
+}   
+}
 
 
 //////////////////////////////////

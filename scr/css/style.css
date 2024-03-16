@@ -8,7 +8,50 @@ body {
   font-family: sans-serif;
   background: linear-gradient(to top, black, rgb(12, 12, 115));
   background-repeat: no-repeat;
+}
+
+.home {
+  z-index: 1;
+  overflow-y: scroll;
+  padding: 50px 0 100px 0;
+  text-align: center;
+  width: 100%;
   height: 100vh;
+}
+.home h1 {
+  color: white;
+}
+.home .languageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+.home .languageBtn {
+  text-decoration: none;
+  color: black;
+  font-size: 1.5em;
+  height: 40px;
+  margin-top: 40px;
+  font-weight: bold;
+  background-color: rgb(185, 184, 184);
+  width: 260px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 20px black;
+  transition: all 0.4s ease;
+}
+.home .languageBtn:hover {
+  box-shadow: 0 0 5px black;
+}
+.home .button-add {
+  background-color: blue;
+  color: white;
+  margin: 50px auto;
 }
 
 .footerNav {
