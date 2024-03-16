@@ -6,7 +6,7 @@
 
 body {
   font-family: sans-serif;
-  background: linear-gradient(to top, black, rgb(12, 12, 115));
+  background: linear-gradient(to top, white, rgba(34, 53, 63, 0.9));
   background-repeat: no-repeat;
 }
 
@@ -49,7 +49,7 @@ body {
   box-shadow: 0 0 5px black;
 }
 .home .button-add {
-  background-color: blue;
+  background-color: rgba(34, 53, 63, 0.9);
   color: white;
   margin: 50px auto;
 }
@@ -60,9 +60,22 @@ body {
   left: 0;
   right: 0;
   height: 70px;
-  background-color: rgba(34, 53, 63, 0.9);
+  background: linear-gradient(to bottom, teal, rgba(34, 53, 63, 0.9));
   z-index: 9999999;
   display: flex;
   justify-content: space-around;
   align-items: center;
+}
+.footerNav .button-q {
+  background-color: white;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.footerNav .middle-btn {
+  padding: 25px;
+  box-shadow: inset 0 0 30px black, 0 0 15px rgba(255, 255, 255, 0.546), 0 0 8px black, 0 0 3px white;
 }/*# sourceMappingURL=style.css.map */

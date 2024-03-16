@@ -2,7 +2,7 @@
 //* Variablen
 
 // Color
-$main-color: rgb(12, 12, 115);
+$main-color: rgba(34, 53, 63, 0.9);
 $secondary-color: lightblue;
 
 // Z-Index
@@ -18,12 +18,12 @@ $z-footer-nav: 9999999;
 
 body {
     font-family: sans-serif;
-    background: linear-gradient(to top, black, $main-color);
+    background: linear-gradient(to top, white, $main-color);
     background-repeat: no-repeat;
 }
 
 //////////////////////////////////
-///* Footer Nav
+///* Home
 //////////////////////////////////
 .home {
     z-index: $z-homepage;
@@ -71,7 +71,7 @@ body {
 
 
 .button-add {
-    background-color: blue;
+    background-color: $main-color;
     color: white;
    margin: 50px auto;
 }   
@@ -87,9 +87,26 @@ body {
     left: 0;
     right: 0;
     height: 70px;
-    background-color: rgba(34, 53, 63, 0.9);
+    // background-color: rgba(34, 53, 63, 0.9);
+    background: linear-gradient(to bottom, teal, rgba(34, 53, 63, 0.9) );
     z-index: $z-footer-nav;
     display: flex;
     justify-content: space-around;
     align-items: center;
+
+
+    .button-q {
+        background-color: white;
+        padding: 10px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .middle-btn {
+        padding: 25px;
+        box-shadow: inset 0 0 30px black, 0 0 15px rgba(255, 255, 255, 0.546), 0 0 8px black, 0 0 3px white;
+    }
 }
