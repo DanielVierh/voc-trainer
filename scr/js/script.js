@@ -1,9 +1,10 @@
 const btn_add_new_lang = document.getElementById('btn_add_new_lang');
-
-const languages = [];
-
+const modal_language_menu = document.getElementById('modal_language_menu');
 let cardBackSideIsVisible = false;
 let allVocables = [];
+let languages = [];
+let modal_is_visible = false;
+
 
 let voc_Saveobject = {
     languagePacks: [],
@@ -70,19 +71,21 @@ class LanguagePack {
     }
 }
 
-// class Modal {
-//     static modal_list = [modal_language_menu, modal_new_words, modal_words];
-//     static open_modal(modal) {
-//         this.close_all_modals();
-//         modal.classList.add('active');
-//     }
+class Modal {
+    static modal_list = [modal_language_menu];
+    static open_modal(modal) {
+        this.close_all_modals();
+        modal.classList.add('active');
+        modal_is_visible = true;
+    }
 
-//     static close_all_modals() {
-//         for (let i = 0; i < this.modal_list.length; i++) {
-//             this.modal_list[i].classList.remove('active');
-//         }
-//     }
-// }
+    static close_all_modals() {
+        for (let i = 0; i < this.modal_list.length; i++) {
+            this.modal_list[i].classList.remove('active');
+            modal_is_visible = false;
+        }
+    }
+}
 
 
 btn_add_new_lang.addEventListener('click', ()=> {

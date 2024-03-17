@@ -27,7 +27,54 @@ body {
   align-items: center;
   margin: 0 auto;
 }
-.home .languageBtn {
+
+.modal {
+  transform: translateY(200%);
+  transition: all 0.6s ease-in-out;
+}
+.modal.active {
+  transform: translateY(0);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: linear-gradient(to top, white, rgba(34, 53, 63, 0.9));
+  -webkit-backdrop-filter: blur(30px);
+          backdrop-filter: blur(30px);
+}
+
+.modal-language-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0;
+  color: white;
+}
+.modal-language-menu h1 {
+  margin: 50px auto;
+}
+
+.actionbutton {
+  min-width: 180px;
+  height: 50px;
+  background-color: black;
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 0 5px black;
+  font-size: 1.2em;
+  padding: 8px 25px;
+  cursor: pointer;
+}
+
+.languageBtn {
   text-decoration: none;
   color: black;
   font-size: 1.5em;
@@ -45,10 +92,26 @@ body {
   box-shadow: 0 0 20px black;
   transition: all 0.4s ease;
 }
-.home .languageBtn:hover {
+.languageBtn:hover {
   box-shadow: 0 0 5px black;
 }
-.home .button-add {
+
+.button-q {
+  background-color: white;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.middle-btn {
+  padding: 25px;
+  box-shadow: inset 0 0 30px black, 0 0 15px rgba(255, 255, 255, 0.546), 0 0 8px black, 0 0 3px white;
+}
+
+.button-add {
   background-color: rgba(34, 53, 63, 0.9);
   color: white;
   margin: 50px auto;
@@ -65,17 +128,4 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-}
-.footerNav .button-q {
-  background-color: white;
-  padding: 10px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-.footerNav .middle-btn {
-  padding: 25px;
-  box-shadow: inset 0 0 30px black, 0 0 15px rgba(255, 255, 255, 0.546), 0 0 8px black, 0 0 3px white;
 }/*# sourceMappingURL=style.css.map */
