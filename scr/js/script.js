@@ -1,5 +1,7 @@
 const btn_add_new_lang = document.getElementById('btn_add_new_lang');
 const modal_language_menu = document.getElementById('modal_language_menu');
+const addVocable_2 = document.getElementById('addVocable_2');
+
 let cardBackSideIsVisible = false;
 let allVocables = [];
 let languages = [];
@@ -16,7 +18,8 @@ let voc_Saveobject = {
 window.onload = init();
 
 function init() {
-    load_Data_from_LocalStorage()
+    load_Data_from_LocalStorage();
+    toggle_add_button();
 }
 
 // #####################################################################################
@@ -77,13 +80,25 @@ class Modal {
         this.close_all_modals();
         modal.classList.add('active');
         modal_is_visible = true;
+        toggle_add_button();
     }
 
     static close_all_modals() {
         for (let i = 0; i < this.modal_list.length; i++) {
             this.modal_list[i].classList.remove('active');
             modal_is_visible = false;
+            toggle_add_button();
         }
+    }
+}
+
+function toggle_add_button() {
+    if(modal_is_visible === true) {
+        setTimeout(() => {
+            addVocable_2.classList.add('active');
+        }, 300);
+    }else {
+        addVocable_2.classList.remove('active');
     }
 }
 

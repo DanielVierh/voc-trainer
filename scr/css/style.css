@@ -31,9 +31,6 @@ body {
 .modal {
   transform: translateY(200%);
   transition: all 0.6s ease-in-out;
-}
-.modal.active {
-  transform: translateY(0);
   position: fixed;
   top: 0;
   left: 0;
@@ -44,6 +41,9 @@ body {
   -webkit-backdrop-filter: blur(30px);
           backdrop-filter: blur(30px);
 }
+.modal.active {
+  transform: translateY(0);
+}
 
 .modal-language-menu {
   width: 100%;
@@ -51,7 +51,6 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 50px 0;
-  color: white;
 }
 .modal-language-menu h1 {
   margin: 50px auto;
@@ -107,8 +106,12 @@ body {
 }
 
 .middle-btn {
+  transform: translateY(200%);
   padding: 25px;
-  box-shadow: inset 0 0 30px black, 0 0 15px rgba(255, 255, 255, 0.546), 0 0 8px black, 0 0 3px white;
+  transition: all 0.6s ease-in-out;
+}
+.middle-btn.active {
+  transform: translateY(0);
 }
 
 .button-add {
