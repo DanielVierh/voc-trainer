@@ -320,11 +320,13 @@ function showWords() {
 
 function text_to_speech(lang_code, text) { 
 	var msg = new SpeechSynthesisUtterance();
+    const pitch_numb = getRandomInt(3);
+    
 	msg.text = text;
 	msg.lang = lang_code;
 	msg.volume = 1; // 0 to 1
 	msg.rate = .9; // 0.1 to 10
-	msg.pitch = 2; //0 to 2
+	msg.pitch = pitch_numb; //0 to 2
 
 	speechSynthesis.speak(msg);  
   }
@@ -341,3 +343,8 @@ function delete_local_storage() {
     localStorage.removeItem("vocTrainer_save_Object");
     location.reload();
 }
+
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
