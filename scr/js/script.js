@@ -2,7 +2,7 @@ const btn_add_new_lang = document.getElementById('btn_add_new_lang');
 const modal_language_menu = document.getElementById('modal_language_menu');
 const addVocable = document.getElementById('addVocable');
 const modal_new_words = document.getElementById('modal_new_words');
-
+const close_new_word_modal = document.getElementById('close_new_word_modal');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -94,6 +94,10 @@ class Modal {
     }
 }
 
+close_new_word_modal.addEventListener('click', ()=> {
+    Modal.open_modal(modal_language_menu)
+})
+
 function toggle_add_button() {
     if(modal_is_visible === true) {
         setTimeout(() => {
@@ -107,6 +111,7 @@ function toggle_add_button() {
 
 btn_add_new_lang.addEventListener('click', ()=> {
     create_new_languge_pack();
+
 })
 
 //? Generate Language Package
@@ -207,6 +212,44 @@ if (btn_translate) {
                 .catch(error => {
                     console.error("Translation error:", error);
                 });
+        }
+    })
+}
+
+
+
+
+class Vocable {
+    constructor(ownLangWord, foreignLangWord, wordId, voableStatus) {
+        this.ownLangWord = ownLangWord;
+        this.foreignLangWord = foreignLangWord;
+        this.wordId = wordId;
+        this.voableStatus = voableStatus;
+    }
+}
+
+
+// * Eingegebenes Wort hinzufügen
+if (btn_Save_new_Vocable) {
+    btn_Save_new_Vocable.addEventListener("click", () => {
+
+        // Reset Textfields
+        const word = inp_word_own.value;
+        const translation = inp_word_foreign.value;
+        const langId = voc_Saveobject.currentId;
+
+        if (word.length !== '' && translation !== '') {
+            for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
+                if (voc_Saveobject.languagePacks[i].id === langId) {
+                    voc_Saveobject.languagePacks[i].word_DB.push(new Vocable(word, translation, create_Id(), 0))
+                    updateSaveObj(voc_Saveobject);
+                    break;
+                }
+            }
+            inp_word_own.value = '';
+            inp_word_foreign.value = '';
+        } else {
+            alert("Beide Felder müssen ausgefüllt sein")
         }
     })
 }
