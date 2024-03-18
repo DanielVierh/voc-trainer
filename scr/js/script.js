@@ -3,6 +3,9 @@ const modal_language_menu = document.getElementById('modal_language_menu');
 const addVocable = document.getElementById('addVocable');
 const modal_new_words = document.getElementById('modal_new_words');
 const close_new_word_modal = document.getElementById('close_new_word_modal');
+const modal_words = document.getElementById('modal_words');
+const showMyVocables = document.getElementById('showMyVocables');
+const close_word_modal = document.getElementById('close_word_modal');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -76,8 +79,9 @@ class LanguagePack {
     }
 }
 
+//* ANCHOR - Modal
 class Modal {
-    static modal_list = [modal_language_menu, modal_new_words];
+    static modal_list = [modal_language_menu, modal_new_words, modal_words];
     static open_modal(modal) {
         this.close_all_modals();
         modal.classList.add('active');
@@ -95,7 +99,10 @@ class Modal {
 }
 
 close_new_word_modal.addEventListener('click', ()=> {
-    Modal.open_modal(modal_language_menu)
+    Modal.open_modal(modal_language_menu);
+})
+close_word_modal.addEventListener('click', ()=> {
+    Modal.open_modal(modal_language_menu);
 })
 
 function toggle_add_button() {
@@ -111,7 +118,6 @@ function toggle_add_button() {
 
 btn_add_new_lang.addEventListener('click', ()=> {
     create_new_languge_pack();
-
 })
 
 //? Generate Language Package
@@ -252,4 +258,49 @@ if (btn_Save_new_Vocable) {
             alert("Beide Felder müssen ausgefüllt sein")
         }
     })
+}
+
+
+// * Show words
+
+showMyVocables.addEventListener('click', ()=> {
+    Modal.open_modal(modal_words);
+    showWords();
+})
+
+function showWords() {
+    const langId = voc_Saveobject.currentId;
+   
+    for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
+        if (voc_Saveobject.languagePacks[i].id === langId) {
+            const wordbook = voc_Saveobject.languagePacks[i].word_DB;
+            if(wordbook.length === 0) {
+                wordsWrapper.innerHTML = 'Keine Vokabeln vorhanden';
+            }else {
+                wordsWrapper.innerHTML = '';
+            } 
+            for (let j = 0; j < wordbook.length; j++) {
+                let row = document.createElement('div')
+                row.classList.add("row")
+
+                let cell = document.createElement('div')
+                cell.classList.add("cell")
+                cell.innerHTML = wordbook[j].ownLangWord
+                cell.id = wordbook[j].wordId
+
+                let cellr = document.createElement('div')
+                cellr.classList.add("cell")
+                cellr.classList.add("cellr")
+                cellr.innerHTML = wordbook[j].foreignLangWord
+                cellr.id = wordbook[j].wordId
+
+                row.appendChild(cell)
+                row.appendChild(cellr)
+
+                wordsWrapper.appendChild(row)
+
+            }
+            break;
+        }
+    }
 }
