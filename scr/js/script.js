@@ -1,6 +1,8 @@
 const btn_add_new_lang = document.getElementById('btn_add_new_lang');
 const modal_language_menu = document.getElementById('modal_language_menu');
-const addVocable_2 = document.getElementById('addVocable_2');
+const addVocable = document.getElementById('addVocable');
+const modal_new_words = document.getElementById('modal_new_words');
+
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -75,7 +77,7 @@ class LanguagePack {
 }
 
 class Modal {
-    static modal_list = [modal_language_menu];
+    static modal_list = [modal_language_menu, modal_new_words];
     static open_modal(modal) {
         this.close_all_modals();
         modal.classList.add('active');
@@ -95,10 +97,10 @@ class Modal {
 function toggle_add_button() {
     if(modal_is_visible === true) {
         setTimeout(() => {
-            addVocable_2.classList.add('active');
+            addVocable.classList.add('active');
         }, 300);
     }else {
-        addVocable_2.classList.remove('active');
+        addVocable.classList.remove('active');
     }
 }
 
@@ -148,4 +150,63 @@ const create_Id = ()=> {
         id = id + chars[randomNumb]
     }
     return id;
+}
+
+
+if(addVocable) {
+    try {
+        addVocable.addEventListener('click', ()=> {
+            Modal.open_modal(modal_new_words);
+        })
+    } catch (error) {
+        
+    }
+}
+
+
+
+
+async function fetchTranslation(sourceLang, targetLang, sourceText) {
+    const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
+        sourceLang + "&tl=" + targetLang + "&dt=t&q=" + encodeURI(sourceText);
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching translation:', error);
+        return null;
+    }
+}
+
+
+
+
+//* Translate Text 
+
+if (btn_translate) {
+    btn_translate.addEventListener('click', () => {
+        if (inp_word_own.value !== '') {
+            const sourceLang = "de"; //TODO - Dynamisch machen
+            let targetLang = "en"; //TODO - Dynamisch machen
+            if(inp_lang_short_code.value !== '') {
+                targetLang = inp_lang_short_code.value;
+            }
+            const sourceText = inp_word_own.value;
+
+            fetchTranslation(sourceLang, targetLang, sourceText)
+                .then(translation => {
+                    const translatedText = translation[0][0][0]
+                    console.log("Translation:", translatedText);
+                    inp_word_foreign.value = translatedText;
+                })
+                .catch(error => {
+                    console.error("Translation error:", error);
+                });
+        }
+    })
 }
