@@ -6,11 +6,13 @@ const close_new_word_modal = document.getElementById('close_new_word_modal');
 const modal_words = document.getElementById('modal_words');
 const showMyVocables = document.getElementById('showMyVocables');
 const close_word_modal = document.getElementById('close_word_modal');
+const btn_settings = document.getElementById('btn_settings');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
 let languages = [];
 let modal_is_visible = false;
+let current_language_code = ''
 
 
 let voc_Saveobject = {
@@ -67,7 +69,7 @@ const updateSaveObj = (svObj) => {
  * Language Class
  */
 class LanguagePack {
-    constructor(id, language_Name) {
+    constructor(id, language_Name, language_code) {
         this.id = id;
         this.language_Name = language_Name;
         this.level_1_DB = [];
@@ -76,6 +78,7 @@ class LanguagePack {
         this.level_4_DB = [];
         this.testfail_DB = [];
         this.word_DB = [];
+        this.language_code = language_code;
     }
 }
 
@@ -122,10 +125,11 @@ btn_add_new_lang.addEventListener('click', ()=> {
 
 //? Generate Language Package
 function create_new_languge_pack() {
-    const languageName = window.prompt("Welche Sprache möchtest du lernen?")
+    const languageName = window.prompt("Welche Sprache möchtest du lernen?");
+    const language_code = window.prompt("Gib den Sprachcode ein. Z.B. en für Englisch, es für Spanisch");
 
     if (languageName !== null && languageName.length > 4) {
-        const newLang = new LanguagePack(create_Id(), languageName)
+        const newLang = new LanguagePack(create_Id(), languageName, language_code);
         console.log('newLang', newLang);
         add_Language_to_SaveObj(newLang);
         window.location.reload();
@@ -139,6 +143,7 @@ function renderLanguages() {
         languageButton.innerHTML = voc_Saveobject.languagePacks[i].language_Name;
         languageButton.classList.add('languageBtn')
         languageButton.id = voc_Saveobject.languagePacks[i].id;
+
         languageButton.onclick = function () {
             voc_Saveobject.showLanguage = this.innerHTML;
             voc_Saveobject.currentId = this.id;
@@ -146,6 +151,7 @@ function renderLanguages() {
             setTimeout(() => {
                 Modal.open_modal(modal_language_menu);
                 lngLabel.innerHTML = this.innerHTML;
+                current_language_code = voc_Saveobject.languagePacks[i].language_code;
             }, 200);
         };
         langContainer.appendChild(languageButton);
@@ -168,6 +174,8 @@ if(addVocable) {
     try {
         addVocable.addEventListener('click', ()=> {
             Modal.open_modal(modal_new_words);
+            inp_lang_short_code.value = current_language_code
+           
         })
     } catch (error) {
         
@@ -293,6 +301,9 @@ function showWords() {
                 cellr.classList.add("cellr")
                 cellr.innerHTML = wordbook[j].foreignLangWord
                 cellr.id = wordbook[j].wordId
+                cellr.addEventListener('click', ()=> {
+                    text_to_speech(current_language_code, wordbook[j].foreignLangWord)
+                })
 
                 row.appendChild(cell)
                 row.appendChild(cellr)
@@ -303,4 +314,30 @@ function showWords() {
             break;
         }
     }
+}
+
+
+
+function text_to_speech(lang_code, text) { 
+	var msg = new SpeechSynthesisUtterance();
+	msg.text = text;
+	msg.lang = lang_code;
+	msg.volume = 1; // 0 to 1
+	msg.rate = .9; // 0.1 to 10
+	msg.pitch = 2; //0 to 2
+
+	speechSynthesis.speak(msg);  
+  }
+
+
+  btn_settings.addEventListener('click', ()=> {
+        const confirm = window.confirm('Sollen alle Daten gelöscht werden?')
+        if(confirm) {
+            delete_local_storage() 
+        }
+  })
+
+function delete_local_storage() {
+    localStorage.removeItem("vocTrainer_save_Object");
+    location.reload();
 }
