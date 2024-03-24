@@ -37,7 +37,7 @@ body {
   right: 0;
   bottom: 0;
   z-index: 1000;
-  background: linear-gradient(to top, white, rgba(34, 53, 63, 0.9));
+  background: white;
   -webkit-backdrop-filter: blur(30px);
           backdrop-filter: blur(30px);
 }
