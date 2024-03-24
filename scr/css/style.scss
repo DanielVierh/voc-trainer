@@ -192,6 +192,7 @@ body {
     padding: 25px;
     transition: all .6s ease-in-out;
     cursor: pointer;
+    box-shadow: 0 0 25px gray;
 
     &.active {
         transform: translateY(0);
@@ -216,7 +217,6 @@ body {
     left: 0;
     right: 0;
     height: 70px;
-    // background-color: rgba(34, 53, 63, 0.9);
     background: linear-gradient(to bottom, rgba(0, 0, 255, 0.683), rgba(34, 53, 63, 0.9));
     z-index: $z-footer-nav;
     display: flex;
