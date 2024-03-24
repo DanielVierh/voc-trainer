@@ -128,9 +128,9 @@ btn_add_new_lang.addEventListener('click', ()=> {
 //*ANCHOR - Generate Language Package
 function create_new_languge_pack() {
     const languageName = window.prompt("Welche Sprache möchtest du lernen?");
-    const language_code = window.prompt("Gib den Sprachcode ein. Z.B. en für Englisch, es für Spanisch");
 
     if (languageName !== null && languageName.length > 4) {
+        const language_code = window.prompt("Gib den Sprachcode ein. Z.B. en für Englisch, es für Spanisch");
         const newLang = new LanguagePack(create_Id(), languageName, language_code);
         console.log('newLang', newLang);
         add_Language_to_SaveObj(newLang);
