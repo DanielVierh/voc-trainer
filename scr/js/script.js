@@ -10,6 +10,8 @@ const close_until_langs = document.querySelectorAll('.close-Modal');
 const wordsWrapper = document.getElementById('wordsWrapper');
 const modal_cards_menu = document.getElementById('modal_cards_menu');
 const btn_open_cardmenu = document.getElementById('btn_open_cardmenu');
+const modal_random_cards = document.getElementById('modal_random_cards');
+const btn_start_random_cards = document.getElementById('btn_start_random_cards');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -94,7 +96,7 @@ class LanguagePack {
 //*ANCHOR -  Modal
 ////////////////////////////////
 class Modal {
-    static modal_list = [modal_language_menu, modal_new_words, modal_words, modal_cards_menu];
+    static modal_list = [modal_language_menu, modal_new_words, modal_words, modal_cards_menu, modal_random_cards];
     static open_modal(modal) {
         this.close_all_modals();
         modal.classList.add('active');
@@ -120,6 +122,10 @@ close_until_langs.forEach((btn) => {
 
 btn_open_cardmenu.addEventListener('click', ()=> {
     Modal.open_modal(modal_cards_menu);
+})
+btn_start_random_cards.addEventListener('click', ()=> {
+    Modal.open_modal(modal_random_cards);
+    get_random_card();
 })
 
 //////////////////////////////
@@ -174,6 +180,7 @@ function renderLanguages() {
                 lngLabel.innerHTML = this.innerHTML;
                 label_transl.innerHTML = this.innerHTML;
                 current_language_code = voc_Saveobject.languagePacks[i].language_code;
+                allVocables = voc_Saveobject.languagePacks[i].word_DB;
             }, 200);
         };
         langContainer.appendChild(languageButton);
@@ -418,3 +425,18 @@ function flipCard() {
         cardBackSideIsVisible = false;
     }
 }
+
+function  get_random_card() {
+    const rnd_card_numb = getRandomInt(allVocables.length);
+    document.getElementById('crdFront').innerHTML = allVocables[rnd_card_numb].ownLangWord;
+    document.getElementById('crdBack').innerHTML = allVocables[rnd_card_numb].foreignLangWord;
+}
+
+document.getElementById('btn_next_card').addEventListener('click', ()=> {
+    card.classList.remove('is-flipped');
+    card.classList.remove('fly-in');
+    setTimeout(() => {
+        card.classList.add('fly-in');
+        get_random_card();
+    }, 200);
+})

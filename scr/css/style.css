@@ -85,6 +85,9 @@ body {
   transform: rotate(40deg);
   border-bottom: 1px solid black;
 }
+.modal-rndCards .card.fly-in {
+  animation: flyIn 1s ease-in-out;
+}
 .modal-rndCards .card.is-flipped {
   transform: translateX(-100%) rotateY(-180deg);
 }
@@ -106,10 +109,19 @@ body {
   background: rgb(14, 79, 97);
 }
 .modal-rndCards .card__face--back {
-  background: rgb(14, 79, 97);
+  background: rgb(110, 184, 110);
+  color: black;
   transform: rotateY(180deg);
 }
 
+@keyframes flyIn {
+  0% {
+    transform: translateX(-200%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
 .modal-language-menu {
   width: 100%;
   display: flex;
