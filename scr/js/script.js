@@ -2,12 +2,12 @@ const btn_add_new_lang = document.getElementById('btn_add_new_lang');
 const modal_language_menu = document.getElementById('modal_language_menu');
 const addVocable = document.getElementById('addVocable');
 const modal_new_words = document.getElementById('modal_new_words');
-const close_new_word_modal = document.getElementById('close_new_word_modal');
 const modal_words = document.getElementById('modal_words');
 const showMyVocables = document.getElementById('showMyVocables');
-const close_word_modal = document.getElementById('close_word_modal');
 const btn_settings = document.getElementById('btn_settings');
 const label_transl = document.getElementById('label_transl');
+const close_until_langs = document.querySelectorAll('.close-Modal');
+const wordsWrapper = document.getElementById('wordsWrapper');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -39,7 +39,7 @@ function load_Data_from_LocalStorage() {
         try {
             renderLanguages();
         } catch (error) {
-            
+
         }
     } else {
         // Keine Einträge vorhanden
@@ -48,12 +48,12 @@ function load_Data_from_LocalStorage() {
 }
 
 //*ANCHOR - Save Into Local Storage
-const save_Data_into_LocalStorage = ()=> {
+const save_Data_into_LocalStorage = () => {
     localStorage.setItem('vocTrainer_save_Object', JSON.stringify(voc_Saveobject));
 }
 
 
-const add_Language_to_SaveObj = (newlanguage)=> {
+const add_Language_to_SaveObj = (newlanguage) => {
     voc_Saveobject.languagePacks.push(newlanguage)
     save_Data_into_LocalStorage()
 }
@@ -84,7 +84,9 @@ class LanguagePack {
     }
 }
 
+////////////////////////////////
 //*ANCHOR -  Modal
+////////////////////////////////
 class Modal {
     static modal_list = [modal_language_menu, modal_new_words, modal_words];
     static open_modal(modal) {
@@ -103,26 +105,27 @@ class Modal {
     }
 }
 
-close_new_word_modal.addEventListener('click', ()=> {
-    Modal.open_modal(modal_language_menu);
-})
-close_word_modal.addEventListener('click', ()=> {
-    Modal.open_modal(modal_language_menu);
+
+close_until_langs.forEach((btn) => {
+    console.log('feffe');
+    btn.addEventListener('click', () => {
+        Modal.open_modal(modal_language_menu);
+    })
 })
 
 //*ANCHOR - Toggle Add Button
 function toggle_add_button() {
-    if(modal_is_visible === true) {
+    if (modal_is_visible === true) {
         setTimeout(() => {
             addVocable.classList.add('active');
         }, 300);
-    }else {
+    } else {
         addVocable.classList.remove('active');
     }
 }
 
 
-btn_add_new_lang.addEventListener('click', ()=> {
+btn_add_new_lang.addEventListener('click', () => {
     create_new_languge_pack();
 })
 
@@ -163,7 +166,7 @@ function renderLanguages() {
 }
 
 //*ANCHOR - Random numb
-const create_Id = ()=> {
+const create_Id = () => {
     const chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '#', 'A', 'B', 'C', 'D', '!', 'E', '$'];
     let id = '';
     for (let i = 1; i <= 15; i++) {
@@ -174,15 +177,15 @@ const create_Id = ()=> {
 }
 
 
-if(addVocable) {
+if (addVocable) {
     try {
-        addVocable.addEventListener('click', ()=> {
+        addVocable.addEventListener('click', () => {
             Modal.open_modal(modal_new_words);
             inp_lang_short_code.value = current_language_code
-           
+
         })
     } catch (error) {
-        
+
     }
 }
 
@@ -218,7 +221,7 @@ if (btn_translate) {
         let sourceText = '';
 
         if (inp_word_own.value !== '') {
-            if(inp_lang_short_code.value !== '') {
+            if (inp_lang_short_code.value !== '') {
                 targetLang = inp_lang_short_code.value;
             }
             sourceText = inp_word_own.value;
@@ -231,20 +234,20 @@ if (btn_translate) {
                 .catch(error => {
                     console.error("Translation error:", error);
                 });
-        }else if(inp_word_foreign.value !== '') {
-            if(inp_lang_short_code.value !== '') {
+        } else if (inp_word_foreign.value !== '') {
+            if (inp_lang_short_code.value !== '') {
                 sourceLang = inp_lang_short_code.value;
             }
             sourceText = inp_word_foreign.value;
             targetLang = "de";
             fetchTranslation(sourceLang, targetLang, sourceText)
-            .then(translation => {
-                const translatedText = translation[0][0][0]
-                inp_word_own.value = translatedText;
-            })
-            .catch(error => {
-                console.error("Translation error:", error);
-            });
+                .then(translation => {
+                    const translatedText = translation[0][0][0]
+                    inp_word_own.value = translatedText;
+                })
+                .catch(error => {
+                    console.error("Translation error:", error);
+                });
         }
     })
 }
@@ -290,22 +293,22 @@ if (btn_Save_new_Vocable) {
 
 //*ANCHOR -  Show words
 
-showMyVocables.addEventListener('click', ()=> {
+showMyVocables.addEventListener('click', () => {
     Modal.open_modal(modal_words);
     showWords();
 })
 
 function showWords() {
     const langId = voc_Saveobject.currentId;
-   
+
     for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         if (voc_Saveobject.languagePacks[i].id === langId) {
             const wordbook = voc_Saveobject.languagePacks[i].word_DB;
-            if(wordbook.length === 0) {
+            if (wordbook.length === 0) {
                 wordsWrapper.innerHTML = 'Keine Vokabeln vorhanden';
-            }else {
+            } else {
                 wordsWrapper.innerHTML = '';
-            } 
+            }
             for (let j = 0; j < wordbook.length; j++) {
                 let row = document.createElement('div')
                 row.classList.add("row")
@@ -320,7 +323,7 @@ function showWords() {
                 cellr.classList.add("cellr")
                 cellr.innerHTML = wordbook[j].foreignLangWord
                 cellr.id = wordbook[j].wordId
-                cellr.addEventListener('click', ()=> {
+                cellr.addEventListener('click', () => {
                     text_to_speech(current_language_code, wordbook[j].foreignLangWord)
                 })
 
@@ -337,26 +340,26 @@ function showWords() {
 
 
 //*ANCHOR - Text to Speech
-function text_to_speech(lang_code, text) { 
-	var msg = new SpeechSynthesisUtterance();
+function text_to_speech(lang_code, text) {
+    var msg = new SpeechSynthesisUtterance();
     const pitch_numb = getRandomInt(3);
-    
-	msg.text = text;
-	msg.lang = lang_code;
-	msg.volume = 1; // 0 to 1
-	msg.rate = .9; // 0.1 to 10
-	msg.pitch = pitch_numb; //0 to 2
 
-	speechSynthesis.speak(msg);  
-  }
+    msg.text = text;
+    msg.lang = lang_code;
+    msg.volume = 1; // 0 to 1
+    msg.rate = .9; // 0.1 to 10
+    msg.pitch = pitch_numb; //0 to 2
+
+    speechSynthesis.speak(msg);
+}
 
 
-  btn_settings.addEventListener('click', ()=> {
-        const confirm = window.confirm('Sollen alle Daten gelöscht werden?')
-        if(confirm) {
-            delete_local_storage() 
-        }
-  })
+btn_settings.addEventListener('click', () => {
+    const confirm = window.confirm('Sollen alle Daten gelöscht werden?')
+    if (confirm) {
+        delete_local_storage()
+    }
+})
 
 function delete_local_storage() {
     localStorage.removeItem("vocTrainer_save_Object");
@@ -368,4 +371,4 @@ function delete_local_storage() {
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-  }
+}
