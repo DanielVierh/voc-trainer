@@ -77,10 +77,46 @@ body {
 }
 
 .modal-cards {
-    
     .btn-wrapper {
         margin-top: 150px;
     }
+}
+
+.modal-rndCards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .card {
+        background-color: rgb(253, 255, 240);
+        font-weight: bold;
+        font-style: italic;
+        min-height: 200px;
+        width: 80vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        margin-bottom: 40px;
+        font-size: 1.5rem;
+        border: 1px solid black;
+        position: relative;
+
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: -28px;
+            right: -17px;
+            width: 26px;
+            height: 40px;
+            background-color: white;
+            transform: rotate(40deg);
+            border-bottom: 1px solid black;
+        }
+    }
+
 }
 
 
