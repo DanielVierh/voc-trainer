@@ -23,7 +23,7 @@
     <div class="modal modal-language-menu" id="modal_language_menu">
         <h1 id="lngLabel"></h1>
         <div class="wrapper">
-            <div class="actionbutton">Karteikarten</div>
+            <div class="actionbutton" id="btn_open_cardmenu">Karteikarten</div>
             <div class="actionbutton">Drag n Drop Test</div>
             <div class="actionbutton">Schreibtest</div>
             <div class="actionbutton" id="showMyVocables">Vokabeln verwalten</div>
@@ -57,8 +57,9 @@
         </div>
     </div>
 
-
+    <!-- /////////////////////////////////////////////// -->
     <!-- * Words -->
+    <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-words" id="modal_words">
         <div class="close-Modal">Fertig</div>
         <div class="wordsWrapper" id="wordsWrapper">
@@ -66,11 +67,20 @@
         </div>
     </div>
 
+    <!-- /////////////////////////////////////////////// -->
     <!-- * Karteikarten -->
+    <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-cards" id="modal_cards_menu">
         <div class="close-Modal">Fertig</div>
-        <div class="wordsWrapper" id="wordsWrapper">
-            <h2>Meine Vokabeln</h2>
+
+        <div class="btn-wrapper">
+            <div class="actionbutton" style="background: rgba(0, 0, 255, 0.367);">Zufallskarten</div>
+            <div class="actionbutton" style="background: rgba(255, 0, 0, 0.371);">Karteikarten Fach 1</div>
+            <div class="actionbutton" style="background: rgba(255, 166, 0, 0.773); color: black;">Karteikarten Fach 2
+            </div>
+            <div class="actionbutton" style="background: rgba(255, 255, 0, 0.678); color: black;">Karteikarten Fach 3
+            </div>
+            <div class="actionbutton" style="background: rgba(0, 128, 0, 0.582);">Karteikarten Fach 4</div>
         </div>
     </div>
 

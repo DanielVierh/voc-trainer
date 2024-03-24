@@ -8,6 +8,8 @@ const btn_settings = document.getElementById('btn_settings');
 const label_transl = document.getElementById('label_transl');
 const close_until_langs = document.querySelectorAll('.close-Modal');
 const wordsWrapper = document.getElementById('wordsWrapper');
+const modal_cards_menu = document.getElementById('modal_cards_menu');
+const btn_open_cardmenu = document.getElementById('btn_open_cardmenu');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -88,7 +90,7 @@ class LanguagePack {
 //*ANCHOR -  Modal
 ////////////////////////////////
 class Modal {
-    static modal_list = [modal_language_menu, modal_new_words, modal_words];
+    static modal_list = [modal_language_menu, modal_new_words, modal_words, modal_cards_menu];
     static open_modal(modal) {
         this.close_all_modals();
         modal.classList.add('active');
@@ -111,6 +113,10 @@ close_until_langs.forEach((btn) => {
     btn.addEventListener('click', () => {
         Modal.open_modal(modal_language_menu);
     })
+})
+
+btn_open_cardmenu.addEventListener('click', ()=> {
+    Modal.open_modal(modal_cards_menu);
 })
 
 //*ANCHOR - Toggle Add Button
