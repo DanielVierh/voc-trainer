@@ -71,12 +71,12 @@ body {
 
     &.active {
         transform: translateY(0);
-
     }
 
 }
 
 .modal-cards {
+    
     .btn-wrapper {
         margin-top: 150px;
     }
@@ -362,7 +362,7 @@ body {
             margin-top: 50px;
 
             label {
-                color: white;
+                color: black;
                 margin: 0 auto;
                 font-weight: bold;
             }
