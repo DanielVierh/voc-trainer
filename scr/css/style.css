@@ -60,15 +60,19 @@ body {
   font-weight: bold;
   font-style: italic;
   min-height: 200px;
-  width: 80vw;
+  width: 90vw;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   margin-bottom: 40px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   border: 1px solid black;
   position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform-origin: center right;
+  transition: transform 1s;
 }
 .modal-rndCards .card::after {
   content: "";
@@ -80,6 +84,30 @@ body {
   background-color: white;
   transform: rotate(40deg);
   border-bottom: 1px solid black;
+}
+.modal-rndCards .card.is-flipped {
+  transform: translateX(-100%) rotateY(-180deg);
+}
+.modal-rndCards .card__face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  word-wrap: break-word;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1em;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-rndCards .card__face--front {
+  background: rgb(14, 79, 97);
+}
+.modal-rndCards .card__face--back {
+  background: rgb(14, 79, 97);
+  transform: rotateY(180deg);
 }
 
 .modal-language-menu {

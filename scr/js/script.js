@@ -23,7 +23,9 @@ let voc_Saveobject = {
     showLanguage: ''
 }
 
+//////////////////////////////
 //*ANCHOR - Init
+//////////////////////////////
 
 window.onload = init();
 
@@ -32,8 +34,9 @@ function init() {
     toggle_add_button();
 }
 
-// #####################################################################################
+//////////////////////////////
 //*ANCHOR -  Load Data
+//////////////////////////////
 
 function load_Data_from_LocalStorage() {
     if (localStorage.getItem('vocTrainer_save_Object') != null) {
@@ -49,7 +52,9 @@ function load_Data_from_LocalStorage() {
     }
 }
 
+//////////////////////////////
 //*ANCHOR - Save Into Local Storage
+//////////////////////////////
 const save_Data_into_LocalStorage = () => {
     localStorage.setItem('vocTrainer_save_Object', JSON.stringify(voc_Saveobject));
 }
@@ -68,10 +73,9 @@ const updateSaveObj = (svObj) => {
 
 
 
-/**
- * #####################################################################################
+//////////////////////////////
 //*ANCHOR -  Language Class
- */
+//////////////////////////////
 class LanguagePack {
     constructor(id, language_Name, language_code) {
         this.id = id;
@@ -119,7 +123,9 @@ btn_open_cardmenu.addEventListener('click', ()=> {
     Modal.open_modal(modal_cards_menu);
 })
 
+//////////////////////////////
 //*ANCHOR - Toggle Add Button
+//////////////////////////////
 function toggle_add_button() {
     if (modal_is_visible === true) {
         setTimeout(() => {
@@ -135,7 +141,9 @@ btn_add_new_lang.addEventListener('click', () => {
     create_new_languge_pack();
 })
 
+//////////////////////////////
 //*ANCHOR - Generate Language Package
+//////////////////////////////
 function create_new_languge_pack() {
     const languageName = window.prompt("Welche Sprache möchtest du lernen?");
 
@@ -148,7 +156,9 @@ function create_new_languge_pack() {
     }
 }
 
+//////////////////////////////
 //*ANCHOR - Render Language
+//////////////////////////////
 function renderLanguages() {
     for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         let languageButton = document.createElement("div");
@@ -171,7 +181,9 @@ function renderLanguages() {
     }
 }
 
+//////////////////////////////
 //*ANCHOR - Random numb
+//////////////////////////////
 const create_Id = () => {
     const chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '#', 'A', 'B', 'C', 'D', '!', 'E', '$'];
     let id = '';
@@ -196,8 +208,9 @@ if (addVocable) {
 }
 
 
-
+//////////////////////////////
 //* ANCHOR Fetch request to translate text
+//////////////////////////////
 async function fetchTranslation(sourceLang, targetLang, sourceText) {
     const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
         sourceLang + "&tl=" + targetLang + "&dt=t&q=" + encodeURI(sourceText);
@@ -217,8 +230,9 @@ async function fetchTranslation(sourceLang, targetLang, sourceText) {
 
 
 
-
+//////////////////////////////
 //* ANCHOR Translate Text 
+//////////////////////////////
 
 if (btn_translate) {
     btn_translate.addEventListener('click', () => {
@@ -259,8 +273,9 @@ if (btn_translate) {
 }
 
 
-
+//////////////////////////////
 //*ANCHOR - Class for Vocable
+//////////////////////////////
 class Vocable {
     constructor(ownLangWord, foreignLangWord, wordId, voableStatus) {
         this.ownLangWord = ownLangWord;
@@ -270,8 +285,10 @@ class Vocable {
     }
 }
 
-
+//////////////////////////////
 //*ANCHOR - Eingegebenes Wort hinzufügen
+//////////////////////////////
+
 if (btn_Save_new_Vocable) {
     btn_Save_new_Vocable.addEventListener("click", () => {
 
@@ -296,8 +313,9 @@ if (btn_Save_new_Vocable) {
     })
 }
 
-
+//////////////////////////////
 //*ANCHOR -  Show words
+//////////////////////////////
 
 showMyVocables.addEventListener('click', () => {
     Modal.open_modal(modal_words);
@@ -344,8 +362,9 @@ function showWords() {
     }
 }
 
-
+//////////////////////////////
 //*ANCHOR - Text to Speech
+//////////////////////////////
 function text_to_speech(lang_code, text) {
     var msg = new SpeechSynthesisUtterance();
     const pitch_numb = getRandomInt(3);
@@ -372,9 +391,33 @@ function delete_local_storage() {
     location.reload();
 }
 
-
+//////////////////////////////
 //*ANCHOR - Random int
+//////////////////////////////
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
+}
+
+
+//////////////////////////////
+//*ANCHOR - Karte drehen
+//////////////////////////////
+
+const card = document.querySelector('.card');
+if (card) {
+    card.addEventListener('click', () => {
+        flipCard()
+    });
+}
+
+function flipCard() {
+    card.classList.toggle('is-flipped');
+    if(cardBackSideIsVisible === false) {
+        cardBackSideIsVisible = true;
+        btnNext.classList.add("active")
+    }else {
+        cardBackSideIsVisible = false;
+        btnNext.classList.remove("active");
+    }
 }
