@@ -20,7 +20,7 @@ let voc_Saveobject = {
     showLanguage: ''
 }
 
-
+//*ANCHOR - Init
 
 window.onload = init();
 
@@ -30,7 +30,7 @@ function init() {
 }
 
 // #####################################################################################
-// Load Data
+//*ANCHOR -  Load Data
 
 function load_Data_from_LocalStorage() {
     if (localStorage.getItem('vocTrainer_save_Object') != null) {
@@ -46,11 +46,12 @@ function load_Data_from_LocalStorage() {
     }
 }
 
+//*ANCHOR - Save Into Local Storage
 const save_Data_into_LocalStorage = ()=> {
     localStorage.setItem('vocTrainer_save_Object', JSON.stringify(voc_Saveobject));
 }
 
-//Exported Functions
+
 const add_Language_to_SaveObj = (newlanguage)=> {
     voc_Saveobject.languagePacks.push(newlanguage)
     save_Data_into_LocalStorage()
@@ -66,7 +67,7 @@ const updateSaveObj = (svObj) => {
 
 /**
  * #####################################################################################
- * Language Class
+//*ANCHOR -  Language Class
  */
 class LanguagePack {
     constructor(id, language_Name, language_code) {
@@ -82,7 +83,7 @@ class LanguagePack {
     }
 }
 
-//* ANCHOR - Modal
+//*ANCHOR -  Modal
 class Modal {
     static modal_list = [modal_language_menu, modal_new_words, modal_words];
     static open_modal(modal) {
@@ -108,6 +109,7 @@ close_word_modal.addEventListener('click', ()=> {
     Modal.open_modal(modal_language_menu);
 })
 
+//*ANCHOR - Toggle Add Button
 function toggle_add_button() {
     if(modal_is_visible === true) {
         setTimeout(() => {
@@ -123,7 +125,7 @@ btn_add_new_lang.addEventListener('click', ()=> {
     create_new_languge_pack();
 })
 
-//? Generate Language Package
+//*ANCHOR - Generate Language Package
 function create_new_languge_pack() {
     const languageName = window.prompt("Welche Sprache möchtest du lernen?");
     const language_code = window.prompt("Gib den Sprachcode ein. Z.B. en für Englisch, es für Spanisch");
@@ -136,7 +138,7 @@ function create_new_languge_pack() {
     }
 }
 
-
+//*ANCHOR - Render Language
 function renderLanguages() {
     for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         let languageButton = document.createElement("div");
@@ -158,7 +160,7 @@ function renderLanguages() {
     }
 }
 
-
+//*ANCHOR - Random numb
 const create_Id = ()=> {
     const chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '#', 'A', 'B', 'C', 'D', '!', 'E', '$'];
     let id = '';
@@ -247,7 +249,7 @@ if (btn_translate) {
 
 
 
-
+//*ANCHOR - Class for Vocable
 class Vocable {
     constructor(ownLangWord, foreignLangWord, wordId, voableStatus) {
         this.ownLangWord = ownLangWord;
@@ -258,7 +260,7 @@ class Vocable {
 }
 
 
-// * Eingegebenes Wort hinzufügen
+//*ANCHOR - Eingegebenes Wort hinzufügen
 if (btn_Save_new_Vocable) {
     btn_Save_new_Vocable.addEventListener("click", () => {
 
@@ -284,7 +286,7 @@ if (btn_Save_new_Vocable) {
 }
 
 
-// * Show words
+//*ANCHOR -  Show words
 
 showMyVocables.addEventListener('click', ()=> {
     Modal.open_modal(modal_words);
@@ -332,7 +334,7 @@ function showWords() {
 }
 
 
-
+//*ANCHOR - Text to Speech
 function text_to_speech(lang_code, text) { 
 	var msg = new SpeechSynthesisUtterance();
     const pitch_numb = getRandomInt(3);
@@ -359,6 +361,8 @@ function delete_local_storage() {
     location.reload();
 }
 
+
+//*ANCHOR - Random int
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
