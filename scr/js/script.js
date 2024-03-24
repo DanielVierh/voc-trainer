@@ -113,7 +113,6 @@ class Modal {
 
 
 close_until_langs.forEach((btn) => {
-    console.log('feffe');
     btn.addEventListener('click', () => {
         Modal.open_modal(modal_language_menu);
     })
@@ -415,9 +414,7 @@ function flipCard() {
     card.classList.toggle('is-flipped');
     if(cardBackSideIsVisible === false) {
         cardBackSideIsVisible = true;
-        btnNext.classList.add("active")
     }else {
         cardBackSideIsVisible = false;
-        btnNext.classList.remove("active");
     }
 }
