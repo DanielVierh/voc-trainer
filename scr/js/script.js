@@ -178,6 +178,7 @@ function renderLanguages() {
             setTimeout(() => {
                 Modal.open_modal(modal_language_menu);
                 lngLabel.innerHTML = this.innerHTML;
+                document.getElementById('card_lang_label').innerHTML = this.innerHTML;
                 label_transl.innerHTML = this.innerHTML;
                 current_language_code = voc_Saveobject.languagePacks[i].language_code;
                 allVocables = voc_Saveobject.languagePacks[i].word_DB;

@@ -98,7 +98,7 @@ body {
         justify-content: center;
         align-items: center;
         padding: 20px;
-        margin-bottom: 40px;
+        margin: 80px 0;
         font-size: 1.3rem;
         border: 1px solid black;
         position: relative;
@@ -198,6 +198,10 @@ body {
     font-size: 1.2em;
     padding: 8px 25px;
     cursor: pointer;
+
+    &.inactive {
+        opacity: .2;
+    }
 }
 
 .close-Modal {
