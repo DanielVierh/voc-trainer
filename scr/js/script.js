@@ -7,6 +7,7 @@ const modal_words = document.getElementById('modal_words');
 const showMyVocables = document.getElementById('showMyVocables');
 const close_word_modal = document.getElementById('close_word_modal');
 const btn_settings = document.getElementById('btn_settings');
+const label_transl = document.getElementById('label_transl');
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -153,6 +154,7 @@ function renderLanguages() {
             setTimeout(() => {
                 Modal.open_modal(modal_language_menu);
                 lngLabel.innerHTML = this.innerHTML;
+                label_transl.innerHTML = this.innerHTML;
                 current_language_code = voc_Saveobject.languagePacks[i].language_code;
             }, 200);
         };
