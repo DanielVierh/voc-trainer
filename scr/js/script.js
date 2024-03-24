@@ -184,7 +184,7 @@ if(addVocable) {
 
 
 
-
+//* ANCHOR Fetch request to translate text
 async function fetchTranslation(sourceLang, targetLang, sourceText) {
     const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
         sourceLang + "&tl=" + targetLang + "&dt=t&q=" + encodeURI(sourceText);
@@ -205,27 +205,42 @@ async function fetchTranslation(sourceLang, targetLang, sourceText) {
 
 
 
-//* Translate Text 
+//* ANCHOR Translate Text 
 
 if (btn_translate) {
     btn_translate.addEventListener('click', () => {
+        let sourceLang = "de";
+        let targetLang = "en";
+        let sourceText = '';
+
         if (inp_word_own.value !== '') {
-            const sourceLang = "de"; //TODO - Dynamisch machen
-            let targetLang = "en"; //TODO - Dynamisch machen
             if(inp_lang_short_code.value !== '') {
                 targetLang = inp_lang_short_code.value;
             }
-            const sourceText = inp_word_own.value;
+            sourceText = inp_word_own.value;
 
             fetchTranslation(sourceLang, targetLang, sourceText)
                 .then(translation => {
                     const translatedText = translation[0][0][0]
-                    console.log("Translation:", translatedText);
                     inp_word_foreign.value = translatedText;
                 })
                 .catch(error => {
                     console.error("Translation error:", error);
                 });
+        }else if(inp_word_foreign.value !== '') {
+            if(inp_lang_short_code.value !== '') {
+                sourceLang = inp_lang_short_code.value;
+            }
+            sourceText = inp_word_foreign.value;
+            targetLang = "de";
+            fetchTranslation(sourceLang, targetLang, sourceText)
+            .then(translation => {
+                const translatedText = translation[0][0][0]
+                inp_word_own.value = translatedText;
+            })
+            .catch(error => {
+                console.error("Translation error:", error);
+            });
         }
     })
 }
