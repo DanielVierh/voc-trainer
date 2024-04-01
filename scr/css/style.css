@@ -245,7 +245,9 @@ body {
   left: 0;
   right: 0;
   height: 70px;
-  background: linear-gradient(to bottom, rgba(0, 0, 255, 0.683), rgba(34, 53, 63, 0.9));
+  background: linear-gradient(to bottom, rgba(0, 174, 255, 0.683), rgba(34, 53, 63, 0.9));
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
   z-index: 9999999;
   display: flex;
   justify-content: space-around;
@@ -357,6 +359,52 @@ body {
 }
 .modal-new-words .wordsWrapper .cellr {
   border-left: 1px solid white;
+}
+
+.mini-modal {
+  display: none;
+}
+.mini-modal.active {
+  display: block;
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 300px;
+  background: rgba(245, 245, 245, 0.536);
+  -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+  border: 1px solid white;
+  border-radius: 15px;
+}
+.mini-modal.active h3 {
+  margin: 30px auto;
+  width: 100%;
+  text-align: center;
+}
+.mini-modal.active .actionbutton {
+  max-width: 90%;
+  margin: 20px auto;
+}
+.mini-modal.active .close-Modal-minimodal {
+  background-color: lightblue;
+  width: 80px;
+  align-self: center;
+  margin-top: 10px;
+  color: black;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 5px;
+  border-radius: 8px;
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
 }
 
 .wordsWrapper {

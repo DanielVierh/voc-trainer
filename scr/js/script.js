@@ -12,12 +12,19 @@ const modal_cards_menu = document.getElementById('modal_cards_menu');
 const btn_open_cardmenu = document.getElementById('btn_open_cardmenu');
 const modal_random_cards = document.getElementById('modal_random_cards');
 const btn_start_random_cards = document.getElementById('btn_start_random_cards');
+const modal_mini = document.getElementById('modal_mini');
+const btn_close_miniModal = document.getElementById('btn_close_miniModal');
+const btn_audio_output = document.getElementById('btn_audio_output');
+const btn_delete_word = document.getElementById('btn_delete_word');
+
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
 let languages = [];
 let modal_is_visible = false;
 let current_language_code = ''
+let current_word = '';
+let current_word_id = -1;
 
 
 let voc_Saveobject = {
@@ -355,7 +362,10 @@ function showWords() {
                 cellr.innerHTML = wordbook[j].foreignLangWord
                 cellr.id = wordbook[j].wordId
                 cellr.addEventListener('click', () => {
-                    text_to_speech(current_language_code, wordbook[j].foreignLangWord)
+                    current_word = wordbook[j].foreignLangWord;
+                    current_word_id = wordbook[j].wordId;
+                    modal_mini.classList.add('active');
+                    document.getElementById('word_minimodal').innerHTML = current_word;
                 })
 
                 row.appendChild(cell)
@@ -368,6 +378,38 @@ function showWords() {
         }
     }
 }
+
+//* btn to delete word
+
+btn_delete_word.addEventListener('click', ()=> {
+    const langId = voc_Saveobject.currentId;
+    for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
+        if (voc_Saveobject.languagePacks[i].id === langId) {
+            for (let j = 0; j < voc_Saveobject.languagePacks[i].word_DB.length; j++) {
+                if(current_word_id === voc_Saveobject.languagePacks[i].word_DB[j].wordId) {
+                    voc_Saveobject.languagePacks[i].word_DB.splice(j, 1);
+                    save_Data_into_LocalStorage();
+                    Modal.close_all_modals();
+                    Modal.open_modal(modal_words);
+                    showWords();
+                    modal_mini.classList.remove('active');
+                    break;
+                }
+            }
+        }
+    }
+})
+
+//* Btn to trigger text to speech
+btn_audio_output.addEventListener('click', ()=> {
+    text_to_speech(current_language_code, current_word);
+})
+
+//* Close mini Modal
+btn_close_miniModal.addEventListener('click', ()=> {
+    modal_mini.classList.remove('active');
+})
+
 
 //////////////////////////////
 //*ANCHOR - Text to Speech
