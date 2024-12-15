@@ -1,9 +1,17 @@
 export function backup(saveobj) {
 
     //* Add identifier to check on read and set the name
-    const identifier = 'vokabeln'
+    const identifier = 'vokabeln';
     
     saveobj.identifier = identifier;
+
+    /**
+     *      <div id="saveJsonBtn">Backup erstellen</div>
+            <h4>Backup importieren</h4>
+            <input type="file" id="uploadJsonBtn" accept=".json" />
+            <div id="btn_importBackup" style="display: none;">Backup einspielen</div>
+            <div class="status-label" id="status"></div>
+     */
     const statusLabel = document.getElementById('status');
     const export_btn = document.getElementById('saveJsonBtn');
     const upload_btn = document.getElementById('uploadJsonBtn');
