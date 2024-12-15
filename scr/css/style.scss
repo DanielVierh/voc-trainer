@@ -12,6 +12,9 @@ $z-footer-nav: 9999999;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden !important;
 }
 
 
@@ -41,6 +44,7 @@ body {
         flex-direction: column;
         align-items: center;
         margin: 0 auto;
+        padding: 20px 0;
     }
 
 
@@ -324,7 +328,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-
+    border-radius: 15px 15px 0 0 ;
 }
 
 
