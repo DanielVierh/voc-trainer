@@ -16,6 +16,10 @@ const modal_mini = document.getElementById('modal_mini');
 const btn_close_miniModal = document.getElementById('btn_close_miniModal');
 const btn_audio_output = document.getElementById('btn_audio_output');
 const btn_delete_word = document.getElementById('btn_delete_word');
+const modal_settings_menu = document.getElementById('modal_settings_menu');
+const btn_export_backup = document.getElementById('btn_export_backup');
+const btn_import_backup = document.getElementById('btn_import_backup');
+const btn_delete_everything = document.getElementById('btn_delete_everything');
 
 
 let cardBackSideIsVisible = false;
@@ -103,7 +107,7 @@ class LanguagePack {
 //*ANCHOR -  Modal
 ////////////////////////////////
 class Modal {
-    static modal_list = [modal_language_menu, modal_new_words, modal_words, modal_cards_menu, modal_random_cards];
+    static modal_list = [modal_language_menu, modal_new_words, modal_words, modal_cards_menu, modal_random_cards, modal_settings_menu];
     static open_modal(modal) {
         this.close_all_modals();
         modal.classList.add('active');
@@ -127,10 +131,10 @@ close_until_langs.forEach((btn) => {
     })
 })
 
-btn_open_cardmenu.addEventListener('click', ()=> {
+btn_open_cardmenu.addEventListener('click', () => {
     Modal.open_modal(modal_cards_menu);
 })
-btn_start_random_cards.addEventListener('click', ()=> {
+btn_start_random_cards.addEventListener('click', () => {
     Modal.open_modal(modal_random_cards);
     get_random_card();
 })
@@ -381,12 +385,12 @@ function showWords() {
 
 //* btn to delete word
 
-btn_delete_word.addEventListener('click', ()=> {
+btn_delete_word.addEventListener('click', () => {
     const langId = voc_Saveobject.currentId;
     for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         if (voc_Saveobject.languagePacks[i].id === langId) {
             for (let j = 0; j < voc_Saveobject.languagePacks[i].word_DB.length; j++) {
-                if(current_word_id === voc_Saveobject.languagePacks[i].word_DB[j].wordId) {
+                if (current_word_id === voc_Saveobject.languagePacks[i].word_DB[j].wordId) {
                     voc_Saveobject.languagePacks[i].word_DB.splice(j, 1);
                     save_Data_into_LocalStorage();
                     Modal.close_all_modals();
@@ -401,12 +405,12 @@ btn_delete_word.addEventListener('click', ()=> {
 })
 
 //* Btn to trigger text to speech
-btn_audio_output.addEventListener('click', ()=> {
+btn_audio_output.addEventListener('click', () => {
     text_to_speech(current_language_code, current_word);
 })
 
 //* Close mini Modal
-btn_close_miniModal.addEventListener('click', ()=> {
+btn_close_miniModal.addEventListener('click', () => {
     modal_mini.classList.remove('active');
 })
 
@@ -429,6 +433,10 @@ function text_to_speech(lang_code, text) {
 
 
 btn_settings.addEventListener('click', () => {
+    Modal.open_modal(modal_settings_menu);
+})
+
+btn_delete_everything.addEventListener('click', () => {
     const confirm = window.confirm('Sollen alle Daten gelöscht werden?')
     if (confirm) {
         delete_local_storage()
@@ -462,20 +470,20 @@ if (card) {
 
 function flipCard() {
     card.classList.toggle('is-flipped');
-    if(cardBackSideIsVisible === false) {
+    if (cardBackSideIsVisible === false) {
         cardBackSideIsVisible = true;
-    }else {
+    } else {
         cardBackSideIsVisible = false;
     }
 }
 
-function  get_random_card() {
+function get_random_card() {
     const rnd_card_numb = getRandomInt(allVocables.length);
     document.getElementById('crdFront').innerHTML = allVocables[rnd_card_numb].ownLangWord;
     document.getElementById('crdBack').innerHTML = allVocables[rnd_card_numb].foreignLangWord;
 }
 
-document.getElementById('btn_next_card').addEventListener('click', ()=> {
+document.getElementById('btn_next_card').addEventListener('click', () => {
     card.classList.remove('is-flipped');
     card.classList.remove('fly-in');
     setTimeout(() => {

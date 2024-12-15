@@ -82,6 +82,20 @@ body {
     }
 }
 
+.modal-settings-menu {
+    z-index: 99999999999;
+    padding: 50px 10px;
+
+    a {
+        text-decoration: none !important;
+    }
+
+    .wrapper {
+        margin-top: 40px;
+    }
+
+}
+
 .modal-rndCards {
     display: flex;
     flex-direction: column;

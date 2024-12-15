@@ -49,6 +49,17 @@ body {
   margin-top: 150px;
 }
 
+.modal-settings-menu {
+  z-index: 99999999999;
+  padding: 50px 10px;
+}
+.modal-settings-menu a {
+  text-decoration: none !important;
+}
+.modal-settings-menu .wrapper {
+  margin-top: 40px;
+}
+
 .modal-rndCards {
   display: flex;
   flex-direction: column;
