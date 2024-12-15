@@ -1,3 +1,6 @@
+import { backup } from './backup.js';
+
+
 const btn_add_new_lang = document.getElementById('btn_add_new_lang');
 const modal_language_menu = document.getElementById('modal_language_menu');
 const addVocable = document.getElementById('addVocable');
@@ -17,8 +20,6 @@ const btn_close_miniModal = document.getElementById('btn_close_miniModal');
 const btn_audio_output = document.getElementById('btn_audio_output');
 const btn_delete_word = document.getElementById('btn_delete_word');
 const modal_settings_menu = document.getElementById('modal_settings_menu');
-const btn_export_backup = document.getElementById('btn_export_backup');
-const btn_import_backup = document.getElementById('btn_import_backup');
 const btn_delete_everything = document.getElementById('btn_delete_everything');
 
 
@@ -56,12 +57,18 @@ function load_Data_from_LocalStorage() {
         voc_Saveobject = JSON.parse(localStorage.getItem('vocTrainer_save_Object'));
         try {
             renderLanguages();
+            backup(voc_Saveobject);
         } catch (error) {
 
         }
     } else {
         // Keine Einträge vorhanden
-        console.warn('Keine Daten geladen')
+        console.warn('Keine Daten geladen');
+        voc_Saveobject = {
+            languagePacks: [],
+            showLanguage: ''
+        }
+        backup(voc_Saveobject);
     }
 }
 

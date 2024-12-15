@@ -80,8 +80,14 @@
         <a class="close-Modal" href="index.html">Fertig</a>
         <h1>Einstellungen</h1>
         <div class="wrapper">
-            <div class="actionbutton" id="btn_export_backup">Backup erstellen</div>
-            <div class="actionbutton" id="btn_import_backup">Backup einspielen</div>
+            <div class="actionbutton" id="saveJsonBtn">Backup erstellen</div>
+            <hr><br>
+            <h4>Backup importieren</h4>
+            <input type="file" id="uploadJsonBtn" accept=".json" />
+            <br><br>
+            <div class="actionbutton" id="btn_importBackup" style="display: none;">Backup einspielen</div>
+            <div class="status-label" id="status"></div>
+            <br><hr><br>
             <div class="actionbutton" id="btn_delete_everything">Alles löschen</div>
         </div>
     </div>
@@ -143,7 +149,7 @@
             </svg></a>
     </section>
 
-    <script src="scr/js/script.js"></script>
+    <script type="module" src="scr/js/script.js"></script>
 </body>
 
 </html>
