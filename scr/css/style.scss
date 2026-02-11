@@ -543,3 +543,25 @@ body {
     color: white;
   }
 }
+
+.toast {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  border-radius: 10px;
+  background-color: green;
+  color: lightgreen;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px gray;
+  z-index: 10000000;
+  max-width: min(90vw, 520px);
+  text-align: center;
+
+  &.active {
+    display: block;
+  }
+}

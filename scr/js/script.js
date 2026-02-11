@@ -40,6 +40,7 @@ const inp_lang_short_code = document.getElementById("inp_lang_short_code");
 const inp_word_own = document.getElementById("inp_word_own");
 const inp_word_foreign = document.getElementById("inp_word_foreign");
 const btn_Save_new_Vocable = document.getElementById("btn_Save_new_Vocable");
+const toast = document.getElementById("toast");
 
 let cardBackSideIsVisible = false;
 let allVocables = [];
@@ -57,6 +58,22 @@ let voc_Saveobject = {
   languagePacks: [],
   showLanguage: "",
 };
+
+let toastTimeoutId = null;
+
+function showToast(message) {
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("active");
+
+  if (toastTimeoutId) {
+    clearTimeout(toastTimeoutId);
+  }
+  toastTimeoutId = setTimeout(() => {
+    toast.classList.remove("active");
+    toastTimeoutId = null;
+  }, 1600);
+}
 
 //////////////////////////////
 //*ANCHOR - Init
@@ -699,6 +716,7 @@ if (btn_Save_new_Vocable) {
           voc_Saveobject.languagePacks[i].level_1_DB.push(newVoc);
           dedupe_word_across_boxes(voc_Saveobject.languagePacks[i]);
           updateSaveObj(voc_Saveobject);
+          showToast("Vokabel hinzugefügt (Fach 1)");
           break;
         }
       }
