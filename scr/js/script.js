@@ -1125,6 +1125,26 @@ function create_new_languge_pack() {
       return;
     }
 
+    const normalizedCode = String(selectedCode).trim().toLowerCase();
+    const normalizedName = String(selectedName).trim().toLowerCase();
+    const alreadyExists = (voc_Saveobject?.languagePacks || []).some((p) => {
+      const code = String(p?.language_code || "")
+        .trim()
+        .toLowerCase();
+      const name = String(p?.language_Name || "")
+        .trim()
+        .toLowerCase();
+      return (
+        (normalizedCode && code === normalizedCode) ||
+        (normalizedName && name === normalizedName)
+      );
+    });
+
+    if (alreadyExists) {
+      showToast("Diese Sprache existiert bereits.");
+      return;
+    }
+
     const newLang = new LanguagePack(create_Id(), selectedName, selectedCode);
     add_Language_to_SaveObj(newLang);
     window.location.reload();
@@ -1137,6 +1157,31 @@ function create_new_languge_pack() {
     const language_code = window.prompt(
       "Gib den Sprachcode ein. Z.B. en für Englisch, es für Spanisch",
     );
+
+    const normalizedCode = String(language_code || "")
+      .trim()
+      .toLowerCase();
+    const normalizedName = String(languageName || "")
+      .trim()
+      .toLowerCase();
+    const alreadyExists = (voc_Saveobject?.languagePacks || []).some((p) => {
+      const code = String(p?.language_code || "")
+        .trim()
+        .toLowerCase();
+      const name = String(p?.language_Name || "")
+        .trim()
+        .toLowerCase();
+      return (
+        (normalizedCode && code === normalizedCode) ||
+        (normalizedName && name === normalizedName)
+      );
+    });
+
+    if (alreadyExists) {
+      showToast("Diese Sprache existiert bereits.");
+      return;
+    }
+
     const newLang = new LanguagePack(create_Id(), languageName, language_code);
     add_Language_to_SaveObj(newLang);
     window.location.reload();
