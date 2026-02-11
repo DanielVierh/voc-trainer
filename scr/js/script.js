@@ -150,7 +150,9 @@ function select_tts_voice(langCode) {
   const normalized = normalize_tts_lang(langCode);
   const primary = (normalized || langCode).split("-")[0];
 
-  const voices = ttsVoices.length ? ttsVoices : window.speechSynthesis.getVoices();
+  const voices = ttsVoices.length
+    ? ttsVoices
+    : window.speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return null;
 
   const preferLocal = (list) => {
@@ -162,7 +164,9 @@ function select_tts_voice(langCode) {
   if (exact.length) return exact.find((v) => v.default) || exact[0];
 
   const byPrimary = preferLocal(
-    voices.filter((v) => typeof v.lang === "string" && v.lang.startsWith(primary + "-")),
+    voices.filter(
+      (v) => typeof v.lang === "string" && v.lang.startsWith(primary + "-"),
+    ),
   );
   if (byPrimary.length) return byPrimary.find((v) => v.default) || byPrimary[0];
 
