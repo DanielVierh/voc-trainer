@@ -84,7 +84,89 @@ window.addEventListener("load", init);
 function init() {
   load_Data_from_LocalStorage();
   populate_new_language_select();
+  init_tts();
   toggle_add_button();
+}
+
+let ttsVoices = [];
+
+function init_tts() {
+  if (!window.speechSynthesis || !window.speechSynthesis.getVoices) return;
+  const loadVoices = () => {
+    ttsVoices = window.speechSynthesis.getVoices() || [];
+  };
+
+  loadVoices();
+  // In manchen Browsern (u.a. Safari) kommen Voices async rein
+  try {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  } catch (e) {
+    // ignore
+  }
+}
+
+function normalize_tts_lang(code) {
+  if (!code) return "";
+  if (code.includes("-")) return code;
+  const map = {
+    de: "de-DE",
+    en: "en-US",
+    es: "es-ES",
+    fr: "fr-FR",
+    it: "it-IT",
+    pt: "pt-PT",
+    nl: "nl-NL",
+    pl: "pl-PL",
+    tr: "tr-TR",
+    ru: "ru-RU",
+    uk: "uk-UA",
+    ro: "ro-RO",
+    bg: "bg-BG",
+    hr: "hr-HR",
+    sr: "sr-RS",
+    sk: "sk-SK",
+    sl: "sl-SI",
+    cs: "cs-CZ",
+    hu: "hu-HU",
+    sv: "sv-SE",
+    no: "nb-NO",
+    da: "da-DK",
+    fi: "fi-FI",
+    el: "el-GR",
+    ar: "ar-SA",
+    he: "he-IL",
+    hi: "hi-IN",
+    id: "id-ID",
+    vi: "vi-VN",
+    th: "th-TH",
+    ja: "ja-JP",
+    ko: "ko-KR",
+  };
+  return map[code] || code;
+}
+
+function select_tts_voice(langCode) {
+  if (!window.speechSynthesis || !window.speechSynthesis.getVoices) return null;
+  const normalized = normalize_tts_lang(langCode);
+  const primary = (normalized || langCode).split("-")[0];
+
+  const voices = ttsVoices.length ? ttsVoices : window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  const preferLocal = (list) => {
+    const local = list.filter((v) => v.localService);
+    return local.length ? local : list;
+  };
+
+  const exact = preferLocal(voices.filter((v) => v.lang === normalized));
+  if (exact.length) return exact.find((v) => v.default) || exact[0];
+
+  const byPrimary = preferLocal(
+    voices.filter((v) => typeof v.lang === "string" && v.lang.startsWith(primary + "-")),
+  );
+  if (byPrimary.length) return byPrimary.find((v) => v.default) || byPrimary[0];
+
+  return null;
 }
 
 function get_common_languages() {
@@ -821,16 +903,27 @@ btn_close_miniModal.addEventListener("click", () => {
 //*ANCHOR - Text to Speech
 //////////////////////////////
 function text_to_speech(lang_code, text) {
-  var msg = new SpeechSynthesisUtterance();
-  const pitch_numb = getRandomInt(3);
+  if (!window.speechSynthesis) return;
+
+  // laufende Ausgabe stoppen, sonst "stapelt" sich Audio
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {
+    // ignore
+  }
+
+  const msg = new SpeechSynthesisUtterance();
+  const normalizedLang = normalize_tts_lang(lang_code);
+  const voice = select_tts_voice(lang_code);
 
   msg.text = text;
-  msg.lang = lang_code;
+  msg.lang = voice?.lang || normalizedLang || lang_code;
+  if (voice) msg.voice = voice;
   msg.volume = 1; // 0 to 1
   msg.rate = 0.9; // 0.1 to 10
-  msg.pitch = pitch_numb; //0 to 2
+  msg.pitch = 1; // neutral, klingt natürlicher
 
-  speechSynthesis.speak(msg);
+  window.speechSynthesis.speak(msg);
 }
 
 btn_settings.addEventListener("click", () => {
