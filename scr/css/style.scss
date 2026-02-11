@@ -260,7 +260,8 @@ body {
 
 .actionbutton {
   min-width: 180px;
-  height: 50px;
+  height: auto;
+  min-height: 50px;
   background-color: black;
   color: white;
   text-align: center;
@@ -271,7 +272,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 5px black;
   font-size: 1.2em;
-  padding: 8px 25px;
+  padding: 14px 28px;
   cursor: pointer;
 
   &.inactive {
@@ -290,7 +291,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 5px;
+  padding: 10px 12px;
   border-radius: 8px;
   position: fixed;
   top: 5px;
@@ -308,7 +309,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 5px;
+  padding: 10px 12px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -317,7 +318,9 @@ body {
   text-decoration: none;
   color: black;
   font-size: 1.5em;
-  height: 40px;
+  height: auto;
+  min-height: 48px;
+  padding: 14px 20px;
   margin-top: 40px;
   font-weight: bold;
   background-color: rgb(185, 184, 184);
@@ -457,7 +460,7 @@ body {
   }
 
   .savebutton {
-    padding: 10px;
+    padding: 14px 22px;
     background-color: green;
     color: lightgreen;
     font-weight: bold;
@@ -555,7 +558,7 @@ body {
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 5px;
+      padding: 10px 12px;
       border-radius: 8px;
       position: fixed;
       top: 80%;
