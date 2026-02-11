@@ -24,9 +24,43 @@
       <h1 id="lngLabel"></h1>
       <div class="wrapper">
         <div class="actionbutton" id="btn_open_cardmenu">Karteikarten</div>
-        <div class="actionbutton inactive">Drag n Drop Test</div>
+        <div class="actionbutton" id="btn_open_dnd_test">Drag n Drop Test</div>
         <div class="actionbutton inactive">Schreibtest</div>
         <div class="actionbutton" id="showMyVocables">Vokabeln verwalten</div>
+      </div>
+    </div>
+
+    <!-- /////////////////////////////////////////////// -->
+    <!--* Drag n Drop Test -->
+    <!-- /////////////////////////////////////////////// -->
+    <div class="modal modal-dnd" id="modal_dnd_test">
+      <div class="close-Modal">Fertig</div>
+      <h2>Drag n Drop Test</h2>
+      <div class="dnd-score" id="dnd_score">Punkte: 0</div>
+
+      <div class="dnd-slots" id="dnd_slots">
+        <div class="dnd-slot" data-slot="1">Paar 1</div>
+        <div class="dnd-slot" data-slot="2">Paar 2</div>
+        <div class="dnd-slot" data-slot="3">Paar 3</div>
+        <div class="dnd-slot" data-slot="4">Paar 4</div>
+      </div>
+
+      <div class="dnd-pool" id="dnd_pool"></div>
+
+      <div class="actionbutton" id="btn_dnd_new_round">Neu</div>
+    </div>
+
+    <!-- /////////////////////////////////////////////// -->
+    <!--* Drag n Drop Ergebnis -->
+    <!-- /////////////////////////////////////////////// -->
+    <div class="modal modal-dnd-result" id="modal_dnd_result">
+      <div class="close-Modal">Fertig</div>
+      <h2 id="dnd_result_title">Ergebnis</h2>
+      <div class="dnd-result-score" id="dnd_result_score">0</div>
+      <div class="dnd-result-stats" id="dnd_result_stats">
+        <div id="dnd_result_correct">Richtig: 0</div>
+        <div id="dnd_result_wrong">Daneben: 0</div>
+        <div id="dnd_result_rounds">Runden: 0</div>
       </div>
     </div>
 
@@ -112,6 +146,11 @@
           Backup einspielen
         </div>
         <div class="status-label" id="status"></div>
+        <br />
+        <hr />
+        <br />
+        <h4>Drag n Drop Ergebnis</h4>
+        <div class="status-label" id="dnd_last_result">Noch kein Ergebnis</div>
         <br />
         <hr />
         <br />

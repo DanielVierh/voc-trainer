@@ -13,6 +13,14 @@ const btn_settings = document.getElementById("btn_settings");
 const label_transl = document.getElementById("label_transl");
 const lngLabel = document.getElementById("lngLabel");
 const langContainer = document.getElementById("langContainer");
+const btn_open_dnd_test = document.getElementById("btn_open_dnd_test");
+const modal_dnd_test = document.getElementById("modal_dnd_test");
+const modal_dnd_result = document.getElementById("modal_dnd_result");
+const dnd_score = document.getElementById("dnd_score");
+const dnd_slots = document.getElementById("dnd_slots");
+const dnd_pool = document.getElementById("dnd_pool");
+const btn_dnd_new_round = document.getElementById("btn_dnd_new_round");
+const dnd_last_result = document.getElementById("dnd_last_result");
 const close_until_langs = document.querySelectorAll(".close-Modal");
 const wordsWrapper = document.getElementById("wordsWrapper");
 const modal_cards_menu = document.getElementById("modal_cards_menu");
@@ -86,6 +94,7 @@ function init() {
   populate_new_language_select();
   init_tts();
   toggle_add_button();
+  render_dnd_last_result();
 }
 
 let ttsVoices = [];
@@ -521,6 +530,8 @@ class Modal {
     modal_new_words,
     modal_words,
     modal_cards_menu,
+    modal_dnd_test,
+    modal_dnd_result,
     modal_random_cards,
     modal_settings_menu,
   ];
@@ -553,9 +564,510 @@ close_until_langs.forEach((btn) => {
 btn_open_cardmenu.addEventListener("click", () => {
   Modal.open_modal(modal_cards_menu);
 });
+
+if (btn_open_dnd_test) {
+  btn_open_dnd_test.addEventListener("click", () => {
+    Modal.open_modal(modal_dnd_test);
+    start_dnd_session();
+  });
+}
+
+if (btn_dnd_new_round) {
+  btn_dnd_new_round.addEventListener("click", () => {
+    if (btn_dnd_new_round.classList.contains("inactive")) return;
+    if (!dndSessionActive) return;
+    const nextIndex = get_next_nonempty_dnd_round_index(dndRoundIndex);
+    if (nextIndex === -1) {
+      open_dnd_result_modal();
+      return;
+    }
+    dndRoundIndex = nextIndex;
+    start_dnd_round();
+  });
+}
 btn_start_random_cards.addEventListener("click", () => {
   start_cards_random();
 });
+
+let dndPoints = 0;
+let dndRoundVocables = [];
+let dndSessionActive = false;
+let dndRoundsTotal = 0;
+let dndRoundIndex = 0;
+let dndRoundBatches = [];
+let dndCorrectPairs = 0;
+let dndWrongAttempts = 0;
+let dndTotalPairs = 0;
+let dndMaxScore = 0;
+let dndSolvedPairsThisRound = 0;
+let dndRoundPairCount = 0;
+
+function is_valid_dnd_vocable(v) {
+  if (!v || !v.wordId) return false;
+  const own = typeof v.ownLangWord === "string" ? v.ownLangWord.trim() : "";
+  const foreign =
+    typeof v.foreignLangWord === "string" ? v.foreignLangWord.trim() : "";
+  return Boolean(own && foreign);
+}
+
+function get_dnd_last_result() {
+  return voc_Saveobject?.dndLastResult || null;
+}
+
+function set_dnd_last_result(result) {
+  voc_Saveobject.dndLastResult = result;
+  save_Data_into_LocalStorage();
+}
+
+function render_dnd_last_result() {
+  if (!dnd_last_result) return;
+  const last = get_dnd_last_result();
+  if (!last) {
+    dnd_last_result.textContent = "Noch kein Ergebnis";
+    return;
+  }
+
+  const dateText = last.finishedAt
+    ? new Date(last.finishedAt).toLocaleString()
+    : "";
+  const outcomeText = last.outcome === "win" ? "Gewonnen" : "Verloren";
+  const maxText = typeof last.maxScore === "number" ? `/${last.maxScore}` : "";
+  dnd_last_result.textContent = `${outcomeText} — Punkte: ${last.score}${maxText} — Richtig: ${last.correctPairs} — Daneben: ${last.wrongAttempts}${dateText ? " — " + dateText : ""}`;
+}
+
+function update_dnd_score() {
+  if (!dnd_score) return;
+  const roundText = dndSessionActive
+    ? ` (Runde ${Math.min(dndRoundIndex + 1, dndRoundsTotal)}/${dndRoundsTotal})`
+    : "";
+  dnd_score.textContent = `Punkte: ${dndPoints}${roundText}`;
+}
+
+function shuffle_in_place(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function get_random_unique(arr, count) {
+  const copy = arr.slice();
+  shuffle_in_place(copy);
+  return copy.slice(0, Math.max(0, Math.min(count, copy.length)));
+}
+
+function chunk_array(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
+function clear_dnd_board() {
+  if (dnd_pool) dnd_pool.innerHTML = "";
+  if (dnd_slots) {
+    const slotEls = dnd_slots.querySelectorAll(".dnd-slot");
+    slotEls.forEach((slot) => {
+      slot.classList.remove("correct");
+      // Slot-Label behalten (Paar X) aber Inhalte entfernen
+      const label = slot.getAttribute("data-slot")
+        ? `Paar ${slot.getAttribute("data-slot")}`
+        : "Paar";
+      slot.innerHTML = label;
+    });
+  }
+}
+
+function make_dnd_card({ id, text, pairId }) {
+  const el = document.createElement("div");
+  el.classList.add("dnd-card");
+  el.id = id;
+  el.textContent = text;
+  el.draggable = true;
+  el.dataset.pairId = pairId;
+
+  const handle_drop_target = (targetEl) => {
+    if (!targetEl || el.classList.contains("solved")) return;
+
+    const pool = dnd_pool;
+    const slot = targetEl.closest ? targetEl.closest(".dnd-slot") : null;
+
+    if (slot) {
+      const cardsInSlot = slot.querySelectorAll(".dnd-card");
+      if (cardsInSlot.length >= 2) {
+        if (pool) pool.appendChild(el);
+        return;
+      }
+
+      if (!slot.querySelector(".dnd-card")) {
+        const slotNum = slot.getAttribute("data-slot") || "";
+        slot.innerHTML = slotNum ? `Paar ${slotNum}` : "Paar";
+      }
+
+      slot.appendChild(el);
+      evaluate_dnd_slot(slot);
+      return;
+    }
+
+    if (
+      pool &&
+      (targetEl === pool || (targetEl.closest && targetEl.closest("#dnd_pool")))
+    ) {
+      pool.appendChild(el);
+    }
+  };
+
+  el.addEventListener("dragstart", (e) => {
+    if (el.classList.contains("solved")) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.setData("text/plain", el.id);
+  });
+
+  // Mobile: Pointer Events Drag&Drop (HTML5 DnD ist auf Touch oft nicht verfügbar)
+  let isPointerDragging = false;
+  let pointerOffsetX = 0;
+  let pointerOffsetY = 0;
+  let originalParent = null;
+  let originalNextSibling = null;
+  let originalStyle = "";
+
+  const isTouchLike = (e) => {
+    if (!e) return false;
+    if (e.pointerType)
+      return e.pointerType === "touch" || e.pointerType === "pen";
+    return (
+      (navigator && navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+      false
+    );
+  };
+
+  const onPointerMove = (e) => {
+    if (!isPointerDragging) return;
+    if (isTouchLike(e)) e.preventDefault();
+
+    const x = e.clientX - pointerOffsetX;
+    const y = e.clientY - pointerOffsetY;
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+  };
+
+  const onPointerUp = (e) => {
+    if (!isPointerDragging) return;
+    if (isTouchLike(e)) e.preventDefault();
+    isPointerDragging = false;
+
+    try {
+      el.releasePointerCapture(e.pointerId);
+    } catch (err) {
+      // ignore
+    }
+
+    el.classList.remove("dragging");
+    el.style.cssText = originalStyle;
+
+    // Drop-Target finden
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    handle_drop_target(under);
+
+    // Falls Karte nirgends hingehört: zurück zum Pool oder ursprünglicher Position
+    if (el.parentElement === document.body) {
+      if (dnd_pool) dnd_pool.appendChild(el);
+      else if (originalParent) {
+        if (
+          originalNextSibling &&
+          originalNextSibling.parentElement === originalParent
+        ) {
+          originalParent.insertBefore(el, originalNextSibling);
+        } else {
+          originalParent.appendChild(el);
+        }
+      }
+    }
+
+    window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointerup", onPointerUp);
+    window.removeEventListener("pointercancel", onPointerUp);
+  };
+
+  el.addEventListener("pointerdown", (e) => {
+    if (!isTouchLike(e)) return; // Desktop bleibt bei HTML5 DnD
+    if (el.classList.contains("solved")) return;
+
+    e.preventDefault();
+    isPointerDragging = true;
+
+    originalParent = el.parentElement;
+    originalNextSibling = el.nextElementSibling;
+    originalStyle = el.getAttribute("style") || "";
+
+    const rect = el.getBoundingClientRect();
+    pointerOffsetX = e.clientX - rect.left;
+    pointerOffsetY = e.clientY - rect.top;
+
+    el.classList.add("dragging");
+    el.style.position = "fixed";
+    el.style.zIndex = "9999";
+    el.style.width = `${rect.width}px`;
+    el.style.left = `${rect.left}px`;
+    el.style.top = `${rect.top}px`;
+
+    document.body.appendChild(el);
+
+    try {
+      el.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // ignore
+    }
+
+    window.addEventListener("pointermove", onPointerMove, { passive: false });
+    window.addEventListener("pointerup", onPointerUp, { passive: false });
+    window.addEventListener("pointercancel", onPointerUp, { passive: false });
+  });
+
+  return el;
+}
+
+function enable_dnd_drop_targets() {
+  if (dnd_pool) {
+    dnd_pool.addEventListener("dragover", (e) => e.preventDefault());
+    dnd_pool.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData("text/plain");
+      const card = document.getElementById(id);
+      if (!card || card.classList.contains("solved")) return;
+      dnd_pool.appendChild(card);
+    });
+  }
+
+  if (!dnd_slots) return;
+  const slotEls = dnd_slots.querySelectorAll(".dnd-slot");
+  slotEls.forEach((slot) => {
+    slot.addEventListener("dragover", (e) => e.preventDefault());
+    slot.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData("text/plain");
+      const card = document.getElementById(id);
+      if (!card || card.classList.contains("solved")) return;
+
+      const cardsInSlot = slot.querySelectorAll(".dnd-card");
+      if (cardsInSlot.length >= 2) return;
+
+      // Entferne Slot-Label-Text beim ersten Drop
+      if (!slot.querySelector(".dnd-card")) {
+        const slotNum = slot.getAttribute("data-slot") || "";
+        slot.innerHTML = slotNum ? `Paar ${slotNum}` : "Paar";
+      }
+
+      slot.appendChild(card);
+      evaluate_dnd_slot(slot);
+    });
+  });
+}
+
+function set_dnd_new_button_enabled(enabled) {
+  if (!btn_dnd_new_round) return;
+  btn_dnd_new_round.classList.toggle("inactive", !enabled);
+}
+
+function build_dnd_batches_from_pack(pack) {
+  if (!pack || !Array.isArray(pack.word_DB)) return [];
+  const words = pack.word_DB.filter(is_valid_dnd_vocable);
+  shuffle_in_place(words);
+  return chunk_array(words, 4)
+    .filter((b) => b.length > 0)
+    .slice(0, 5);
+}
+
+function get_next_nonempty_dnd_round_index(fromIndex) {
+  for (let i = fromIndex + 1; i < dndRoundBatches.length; i++) {
+    const batch = Array.isArray(dndRoundBatches[i])
+      ? dndRoundBatches[i].filter(is_valid_dnd_vocable)
+      : [];
+    if (batch.length > 0) return i;
+  }
+  return -1;
+}
+
+function open_dnd_result_modal() {
+  const titleEl = document.getElementById("dnd_result_title");
+  const scoreEl = document.getElementById("dnd_result_score");
+  const correctEl = document.getElementById("dnd_result_correct");
+  const wrongEl = document.getElementById("dnd_result_wrong");
+  const roundsEl = document.getElementById("dnd_result_rounds");
+
+  const hasWords = dndTotalPairs > 0;
+  const win = hasWords ? dndPoints >= Math.ceil(dndMaxScore * 0.6) : false;
+
+  if (modal_dnd_result) {
+    modal_dnd_result.classList.toggle("win", win);
+    modal_dnd_result.classList.toggle("lose", !win);
+  }
+
+  if (titleEl) titleEl.textContent = win ? "Gewonnen" : "Verloren";
+  if (scoreEl) scoreEl.textContent = String(dndPoints);
+  if (correctEl) correctEl.textContent = `Richtig: ${dndCorrectPairs}`;
+  if (wrongEl) wrongEl.textContent = `Daneben: ${dndWrongAttempts}`;
+  if (roundsEl) roundsEl.textContent = `Runden: ${dndRoundsTotal}`;
+
+  set_dnd_last_result({
+    finishedAt: new Date().toISOString(),
+    score: dndPoints,
+    maxScore: dndMaxScore,
+    correctPairs: dndCorrectPairs,
+    wrongAttempts: dndWrongAttempts,
+    rounds: dndRoundsTotal,
+    outcome: win ? "win" : "lose",
+  });
+  render_dnd_last_result();
+
+  dndSessionActive = false;
+  Modal.open_modal(modal_dnd_result);
+}
+
+function check_dnd_round_complete() {
+  const scope = modal_dnd_test || document;
+  const allCards = scope.querySelectorAll(".dnd-card");
+  const totalCards = allCards.length;
+  const unsolvedCards = Array.from(allCards).filter(
+    (c) => !c.classList.contains("solved"),
+  ).length;
+
+  const doneByCounter =
+    dndRoundPairCount > 0 && dndSolvedPairsThisRound >= dndRoundPairCount;
+  const doneByDom = totalCards > 0 && unsolvedCards === 0;
+
+  if (doneByCounter || doneByDom) {
+    const nextIndex = get_next_nonempty_dnd_round_index(dndRoundIndex);
+    if (nextIndex === -1) {
+      open_dnd_result_modal();
+    } else {
+      set_dnd_new_button_enabled(true);
+    }
+  }
+}
+
+function evaluate_dnd_slot(slot) {
+  const cards = slot.querySelectorAll(".dnd-card");
+  if (cards.length !== 2) return;
+
+  const [a, b] = cards;
+  const same = a.dataset.pairId && a.dataset.pairId === b.dataset.pairId;
+
+  if (same) {
+    dndPoints += 2;
+    dndCorrectPairs += 1;
+    dndSolvedPairsThisRound += 1;
+    slot.classList.add("correct");
+    a.classList.add("solved");
+    b.classList.add("solved");
+    a.draggable = false;
+    b.draggable = false;
+    update_dnd_score();
+    check_dnd_round_complete();
+    return;
+  }
+
+  dndPoints -= 1;
+  dndWrongAttempts += 1;
+  update_dnd_score();
+
+  // Bei falschem Paar: beide Karten zurück in den Pool
+  if (dnd_pool) {
+    dnd_pool.appendChild(a);
+    dnd_pool.appendChild(b);
+  }
+}
+
+function start_dnd_round() {
+  if (!dnd_pool || !dnd_slots) return;
+
+  dndSolvedPairsThisRound = 0;
+  dndRoundPairCount = 0;
+
+  dndRoundVocables = (dndRoundBatches[dndRoundIndex] || []).filter(
+    is_valid_dnd_vocable,
+  );
+
+  // Falls durch Datenbereinigung/Änderungen eine Runde leer ist: überspringen oder Spiel beenden
+  if (dndRoundVocables.length < 1) {
+    if (dndRoundIndex + 1 >= dndRoundsTotal) {
+      open_dnd_result_modal();
+      return;
+    }
+    dndRoundIndex += 1;
+    start_dnd_round();
+    return;
+  }
+
+  clear_dnd_board();
+  enable_dnd_drop_targets();
+  set_dnd_new_button_enabled(false);
+
+  const cards = [];
+  for (const voc of dndRoundVocables) {
+    if (!is_valid_dnd_vocable(voc)) continue;
+    cards.push({
+      id: `dnd_${voc.wordId}_own`,
+      text: voc.ownLangWord,
+      pairId: voc.wordId,
+    });
+    cards.push({
+      id: `dnd_${voc.wordId}_for`,
+      text: voc.foreignLangWord,
+      pairId: voc.wordId,
+    });
+  }
+
+  dndRoundPairCount = Math.floor(cards.length / 2);
+  if (dndRoundPairCount < 1) {
+    if (dndRoundIndex + 1 >= dndRoundsTotal) {
+      open_dnd_result_modal();
+      return;
+    }
+    dndRoundIndex += 1;
+    start_dnd_round();
+    return;
+  }
+
+  shuffle_in_place(cards);
+  for (const c of cards) dnd_pool.appendChild(make_dnd_card(c));
+  update_dnd_score();
+}
+
+function start_dnd_session() {
+  const pack = get_current_pack();
+  if (!pack || !dnd_pool || !dnd_slots) return;
+
+  migrate_and_sync_leitner_data();
+
+  const words = Array.isArray(pack.word_DB) ? pack.word_DB : [];
+  const validWords = words.filter(is_valid_dnd_vocable);
+  if (validWords.length < 1) {
+    showToast("Bitte erst Wörter anlegen.");
+    return;
+  }
+
+  dndSessionActive = true;
+  dndPoints = 0;
+  dndCorrectPairs = 0;
+  dndWrongAttempts = 0;
+  dndRoundIndex = 0;
+  dndRoundBatches = build_dnd_batches_from_pack(pack);
+  dndRoundsTotal = dndRoundBatches.length;
+  dndTotalPairs = dndRoundBatches.reduce((sum, b) => sum + b.length, 0);
+  dndMaxScore = dndTotalPairs * 2;
+
+  if (dndRoundsTotal < 1) {
+    showToast("Bitte erst Wörter anlegen.");
+    return;
+  }
+
+  start_dnd_round();
+}
 
 if (btn_box_1)
   btn_box_1.addEventListener("click", () => start_cards_for_box(1));

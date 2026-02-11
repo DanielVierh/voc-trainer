@@ -49,6 +49,53 @@ body {
   transform: translateY(0);
 }
 
+.modal-dnd-result {
+  width: min(640px, 92vw);
+  text-align: center;
+  padding: 70px 16px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.modal-dnd-result #dnd_result_title {
+  font-size: 2rem;
+  margin-top: 10px;
+}
+
+.modal-dnd-result.win {
+  background: linear-gradient(180deg, rgba(46, 125, 50, 0.18), white 55%);
+}
+
+.modal-dnd-result.lose {
+  background: linear-gradient(180deg, rgba(198, 40, 40, 0.18), white 55%);
+}
+
+.modal-dnd-result.win #dnd_result_title,
+.modal-dnd-result.win .dnd-result-score {
+  color: rgb(46, 125, 50);
+}
+
+.modal-dnd-result.lose #dnd_result_title,
+.modal-dnd-result.lose .dnd-result-score {
+  color: rgb(198, 40, 40);
+}
+
+.dnd-result-score {
+  font-size: clamp(56px, 12vw, 96px);
+  font-weight: 800;
+  margin: 18px 0 8px;
+  line-height: 1;
+}
+
+.dnd-result-stats {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  font-weight: 600;
+}
+
 .modal-cards .btn-wrapper {
   margin-top: 150px;
 }
@@ -496,4 +543,90 @@ body {
 
 .toast.active {
   display: block;
+}
+
+.modal-dnd {
+  padding: 60px 12px 120px 12px;
+  overflow-y: auto;
+}
+
+.modal-dnd h2 {
+  text-align: center;
+}
+
+.dnd-score {
+  margin: 16px auto;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.dnd-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 18px auto;
+}
+
+.dnd-slot {
+  min-height: 90px;
+  border: 2px dashed rgba(34, 53, 63, 0.9);
+  border-radius: 12px;
+  background: rgba(34, 53, 63, 0.08);
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  font-weight: bold;
+  color: rgba(34, 53, 63, 0.9);
+}
+
+.dnd-slot.correct {
+  border-style: solid;
+}
+
+.dnd-pool {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.dnd-card {
+  background-color: rgb(253, 255, 240);
+  border: 1px solid black;
+  border-radius: 12px;
+  padding: 10px 12px;
+  min-width: 120px;
+  max-width: 320px;
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  box-shadow: 0 0 8px gray;
+}
+
+.dnd-card:active {
+  cursor: grabbing;
+}
+
+.dnd-card.solved {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.dnd-card.dragging {
+  cursor: grabbing;
+}
+
+.modal-dnd #btn_dnd_new_round {
+  margin-top: 28px;
 }
