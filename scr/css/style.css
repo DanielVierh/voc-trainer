@@ -40,7 +40,7 @@ body {
   z-index: 1000;
   background: white;
   -webkit-backdrop-filter: blur(30px);
-          backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
   max-width: 800px;
   margin: 0 auto;
   box-shadow: 0 0 15px black;
@@ -261,9 +261,13 @@ body {
   left: 0;
   right: 0;
   height: 70px;
-  background: linear-gradient(to bottom, rgba(0, 174, 255, 0.683), rgba(34, 53, 63, 0.9));
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 174, 255, 0.683),
+    rgba(34, 53, 63, 0.9)
+  );
   -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   z-index: 9999999;
   display: flex;
   justify-content: space-around;
@@ -322,6 +326,14 @@ body {
   font-weight: bold;
 }
 .modal-new-words .contentArea form input {
+  width: 60%;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 1.2em;
+  margin: 0 auto;
+  text-align: center;
+}
+.modal-new-words .contentArea form select {
   width: 60%;
   height: 30px;
   border-radius: 8px;
@@ -393,7 +405,7 @@ body {
   height: 300px;
   background: rgba(245, 245, 245, 0.536);
   -webkit-backdrop-filter: blur(3px);
-          backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   border: 1px solid white;
   border-radius: 15px;
 }
@@ -462,4 +474,4 @@ body {
 .wordsWrapper .cellr {
   border-left: 1px solid white;
   color: white;
-}/*# sourceMappingURL=style.css.map */
+} /*# sourceMappingURL=style.css.map */

@@ -1,155 +1,229 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voc Trainer</title>
-    <link rel="stylesheet" href="scr/css/style.css">
-</head>
+    <link rel="stylesheet" href="scr/css/style.css" />
+  </head>
 
-<body>
+  <body>
     <div class="home">
-        <h1>Vokabeltrainer</h1>
-        <div class="languageBtn button-add" id="btn_add_new_lang">Sprache hinzufügen</div>
-        <div class="languageContainer" id="langContainer"></div>
+      <h1>Vokabeltrainer</h1>
+      <div class="languageBtn button-add" id="btn_add_new_lang">
+        Sprache hinzufügen
+      </div>
+      <div class="languageContainer" id="langContainer"></div>
     </div>
-
 
     <!-- * Modals -->
     <!-- /////////////////////////////////////////////// -->
     <!--* Language Menu -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-language-menu" id="modal_language_menu">
-        <h1 id="lngLabel"></h1>
-        <div class="wrapper">
-            <div class="actionbutton" id="btn_open_cardmenu">Karteikarten</div>
-            <div class="actionbutton inactive">Drag n Drop Test</div>
-            <div class="actionbutton inactive">Schreibtest</div>
-            <div class="actionbutton" id="showMyVocables">Vokabeln verwalten</div>
-        </div>
+      <h1 id="lngLabel"></h1>
+      <div class="wrapper">
+        <div class="actionbutton" id="btn_open_cardmenu">Karteikarten</div>
+        <div class="actionbutton inactive">Drag n Drop Test</div>
+        <div class="actionbutton inactive">Schreibtest</div>
+        <div class="actionbutton" id="showMyVocables">Vokabeln verwalten</div>
+      </div>
+    </div>
+
+    <!-- /////////////////////////////////////////////// -->
+    <!--* Neue Sprache anlegen -->
+    <!-- /////////////////////////////////////////////// -->
+    <div class="modal modal-new-words" id="modal_add_language">
+      <div class="contentArea">
+        <div class="close-Modal">Fertig</div>
+        <h2>Sprache hinzufügen</h2>
+        <form>
+          <div class="inputWrapper">
+            <label for="sel_new_language">Sprache</label>
+            <select id="sel_new_language"></select>
+          </div>
+        </form>
+        <div id="btn_create_language" class="savebutton">Anlegen</div>
+      </div>
     </div>
 
     <!-- /////////////////////////////////////////////// -->
     <!--* Neue Wörter eingeben -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-new-words" id="modal_new_words">
-        <div class="contentArea">
-            <div class="close-Modal">Fertig</div>
-            <h2>Neue Vokabel hinzufügen</h2>
-            <form>
-                <div class="inputWrapper">
-                    <label for="inp_word_own">Sprachcode für Fremdsprache</label>
-                    <input type="text" id="inp_lang_short_code" placeholder="z.B. es oder en">
-                </div>
-                <div class="inputWrapper">
-                    <label for="inp_word_own">Deutsch</label>
-                    <input type="text" id="inp_word_own">
-                    <div class="btn-translate" id="btn_translate">Übersetzen</div>
-                </div>
-                <div class="inputWrapper">
-                    <label for="inp_word_foreign" id="label_transl">Übersetzung</label>
-                    <input type="text" id="inp_word_foreign">
-                </div>
-
-            </form>
-            <div id="btn_Save_new_Vocable" class="savebutton">Speichern</div>
-        </div>
+      <div class="contentArea">
+        <div class="close-Modal">Fertig</div>
+        <h2>Neue Vokabel hinzufügen</h2>
+        <form>
+          <div class="inputWrapper">
+            <label for="inp_word_own">Sprachcode für Fremdsprache</label>
+            <input
+              type="text"
+              id="inp_lang_short_code"
+              placeholder="z.B. es oder en"
+            />
+          </div>
+          <div class="inputWrapper">
+            <label for="inp_word_own">Deutsch</label>
+            <input type="text" id="inp_word_own" />
+            <div class="btn-translate" id="btn_translate">Übersetzen</div>
+          </div>
+          <div class="inputWrapper">
+            <label for="inp_word_foreign" id="label_transl">Übersetzung</label>
+            <input type="text" id="inp_word_foreign" />
+          </div>
+        </form>
+        <div id="btn_Save_new_Vocable" class="savebutton">Speichern</div>
+      </div>
     </div>
 
     <!-- /////////////////////////////////////////////// -->
     <!-- * Words -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-words" id="modal_words">
-        <div class="close-Modal">Fertig</div>
-        <div class="wordsWrapper" id="wordsWrapper">
-            <h2>Meine Vokabeln</h2>
+      <div class="close-Modal">Fertig</div>
+      <div class="wordsWrapper" id="wordsWrapper">
+        <h2>Meine Vokabeln</h2>
+      </div>
+      <div class="mini-modal" id="modal_mini">
+        <h3 id="word_minimodal">Wort</h3>
+        <div class="actionbutton" id="btn_audio_output">Audioausgabe</div>
+        <div class="actionbutton" id="btn_delete_word" style="color: red">
+          Vokabel löschen
         </div>
-        <div class="mini-modal" id="modal_mini">
-            <h3 id="word_minimodal">Wort</h3>
-            <div class="actionbutton" id="btn_audio_output">Audioausgabe</div>
-            <div class="actionbutton" id="btn_delete_word" style="color: red;">Vokabel löschen</div>
-            <div class="close-Modal-minimodal" id="btn_close_miniModal">Fertig</div>
-        </div>
+        <div class="close-Modal-minimodal" id="btn_close_miniModal">Fertig</div>
+      </div>
     </div>
 
     <!-- /////////////////////////////////////////////// -->
     <!--* Settings Menu -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-settings-menu" id="modal_settings_menu">
-        <a class="close-Modal" href="index.html">Fertig</a>
-        <h1>Einstellungen</h1>
-        <div class="wrapper">
-            <div class="actionbutton" id="saveJsonBtn">Backup erstellen</div>
-            <hr><br>
-            <h4>Backup importieren</h4>
-            <input type="file" id="uploadJsonBtn" accept=".json" />
-            <br><br>
-            <div class="actionbutton" id="btn_importBackup" style="display: none;">Backup einspielen</div>
-            <div class="status-label" id="status"></div>
-            <br><hr><br>
-            <div class="actionbutton" id="btn_delete_everything">Alles löschen</div>
+      <a class="close-Modal" href="index.html">Fertig</a>
+      <h1>Einstellungen</h1>
+      <div class="wrapper">
+        <div class="actionbutton" id="saveJsonBtn">Backup erstellen</div>
+        <hr />
+        <br />
+        <h4>Backup importieren</h4>
+        <input type="file" id="uploadJsonBtn" accept=".json" />
+        <br /><br />
+        <div class="actionbutton" id="btn_importBackup" style="display: none">
+          Backup einspielen
         </div>
+        <div class="status-label" id="status"></div>
+        <br />
+        <hr />
+        <br />
+        <div class="actionbutton" id="btn_delete_everything">Alles löschen</div>
+      </div>
     </div>
 
     <!-- /////////////////////////////////////////////// -->
     <!-- * Karteikarten -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-cards" id="modal_cards_menu">
-        <div class="close-Modal">Fertig</div>
+      <div class="close-Modal">Fertig</div>
 
-        <div class="btn-wrapper">
-            <div class="actionbutton" style="background: rgba(0, 0, 255, 0.6);" id="btn_start_random_cards">
-                Zufallskarten</div>
-            <div class="actionbutton inactive" style="background: rgba(255, 0, 0, 0.6);">Karteikarten Fach 1</div>
-            <div class="actionbutton inactive" style="background: rgba(255, 166, 0, 0.6); color: black;">Karteikarten
-                Fach 2
-            </div>
-            <div class="actionbutton inactive" style="background: rgba(255, 255, 0, 0.6); color: black;">Karteikarten
-                Fach 3
-            </div>
-            <div class="actionbutton inactive" style="background: rgba(0, 128, 0, 0.6);">Karteikarten Fach 4</div>
+      <div class="btn-wrapper">
+        <div
+          class="actionbutton"
+          style="background: rgba(0, 0, 255, 0.6)"
+          id="btn_start_random_cards"
+        >
+          Zufallskarten
         </div>
+        <div
+          class="actionbutton inactive"
+          style="background: rgba(255, 0, 0, 0.6)"
+        >
+          Karteikarten Fach 1
+        </div>
+        <div
+          class="actionbutton inactive"
+          style="background: rgba(255, 166, 0, 0.6); color: black"
+        >
+          Karteikarten Fach 2
+        </div>
+        <div
+          class="actionbutton inactive"
+          style="background: rgba(255, 255, 0, 0.6); color: black"
+        >
+          Karteikarten Fach 3
+        </div>
+        <div
+          class="actionbutton inactive"
+          style="background: rgba(0, 128, 0, 0.6)"
+        >
+          Karteikarten Fach 4
+        </div>
+      </div>
     </div>
 
     <!-- /////////////////////////////////////////////// -->
     <!-- * random cards -->
     <!-- /////////////////////////////////////////////// -->
     <div class="modal modal-rndCards" id="modal_random_cards">
-        <div class="close-Modal">Fertig</div>
-        <h2 id="card_lang_label"></h2>
-        <div class="wrapper">
-            <div class="scene scene--card">
-                <div class="card">
-                    <div class="card__face card__face--front" id="crdFront">front</div>
-                    <div class="card__face card__face--back" id="crdBack">back</div>
-                </div>
-            </div>
-            <div class="actionbutton" id="btn_next_card">Nächste Karte</div>
+      <div class="close-Modal">Fertig</div>
+      <h2 id="card_lang_label"></h2>
+      <div class="wrapper">
+        <div class="scene scene--card">
+          <div class="card">
+            <div class="card__face card__face--front" id="crdFront">front</div>
+            <div class="card__face card__face--back" id="crdBack">back</div>
+          </div>
         </div>
+        <div class="actionbutton" id="btn_next_card">Nächste Karte</div>
+      </div>
     </div>
-
 
     <!-- * Footer Nav -->
     <section class="footerNav">
-        <div id="btn_settings" class="button-q" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                fill="currentColor" class="bi bi-sliders2" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5M12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5M1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8m9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5m1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
-            </svg></div>
-        <div class="button-q middle-btn" id="addVocable"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"
-                fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-            </svg></div>
-        <a class="button-q" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                <path
-                    d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
-            </svg></a>
+      <div id="btn_settings" class="button-q" href="#">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-sliders2"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4H1.5a.5.5 0 0 1 0-1H10V1.5a.5.5 0 0 1 .5-.5M12 3.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-6.5 2A.5.5 0 0 1 6 6v1.5h8.5a.5.5 0 0 1 0 1H6V10a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5M1 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 1 8m9.5 2a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V13H1.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5m1.5 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"
+          />
+        </svg>
+      </div>
+      <div class="button-q middle-btn" id="addVocable">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="50"
+          height="50"
+          fill="currentColor"
+          class="bi bi-plus-lg"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
+          />
+        </svg>
+      </div>
+      <a class="button-q" href="index.html"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-house"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"
+          /></svg
+      ></a>
     </section>
 
     <script type="module" src="scr/js/script.js"></script>
-</body>
-
+  </body>
 </html>
