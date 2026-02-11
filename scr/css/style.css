@@ -13,11 +13,15 @@ body {
 
 .home {
   z-index: 1;
-  overflow-y: scroll;
-  padding: 50px 0 100px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding: 50px 0 0 0;
   text-align: center;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
 }
 .home h1 {
   color: white;
@@ -27,26 +31,41 @@ body {
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 120px 0;
 }
 
 .modal {
-  transform: translateY(200%);
-  transition: all 0.6s ease-in-out;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
   z-index: 1000;
   background: white;
   -webkit-backdrop-filter: blur(30px);
-  backdrop-filter: blur(30px);
+          backdrop-filter: blur(30px);
   max-width: 800px;
   margin: 0 auto;
   box-shadow: 0 0 15px black;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  top: 110vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: top 0.6s ease-in-out, opacity 0.25s ease-in-out;
+  padding: 60px 12px 90px 12px;
 }
 .modal.active {
-  transform: translateY(0);
+  top: 0;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .modal-dnd-result {
@@ -308,13 +327,9 @@ body {
   left: 0;
   right: 0;
   height: 70px;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 174, 255, 0.683),
-    rgba(34, 53, 63, 0.9)
-  );
+  background: linear-gradient(to bottom, rgba(0, 174, 255, 0.683), rgba(34, 53, 63, 0.9));
   -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
   z-index: 9999999;
   display: flex;
   justify-content: space-around;
@@ -325,13 +340,7 @@ body {
 }
 
 .modal-new-words {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
-  height: 100%;
 }
 .modal-new-words .NewWords {
   background-color: rgb(186, 205, 218);
@@ -360,12 +369,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 0;
   width: 100%;
 }
 .modal-new-words .contentArea form {
   width: 100%;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 .modal-new-words .contentArea form label {
   color: black;
@@ -410,7 +419,9 @@ body {
   align-items: center;
   width: 100%;
   height: 70vh;
-  overflow-y: scroll;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 .modal-new-words .wordsWrapper h2 {
   color: black;
@@ -452,7 +463,7 @@ body {
   height: 300px;
   background: rgba(245, 245, 245, 0.536);
   -webkit-backdrop-filter: blur(3px);
-  backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
   border: 1px solid white;
   border-radius: 15px;
 }
@@ -521,7 +532,7 @@ body {
 .wordsWrapper .cellr {
   border-left: 1px solid white;
   color: white;
-} /*# sourceMappingURL=style.css.map */
+}
 
 .toast {
   display: none;
@@ -540,7 +551,6 @@ body {
   max-width: min(90vw, 520px);
   text-align: center;
 }
-
 .toast.active {
   display: block;
 }
@@ -549,7 +559,6 @@ body {
   padding: 60px 12px 120px 12px;
   overflow-y: auto;
 }
-
 .modal-dnd h2 {
   text-align: center;
 }
@@ -584,7 +593,6 @@ body {
   font-weight: bold;
   color: rgba(34, 53, 63, 0.9);
 }
-
 .dnd-slot.correct {
   border-style: solid;
 }
@@ -610,14 +618,13 @@ body {
   cursor: grab;
   touch-action: none;
   -webkit-user-select: none;
-  user-select: none;
+  -moz-user-select: none;
+       user-select: none;
   box-shadow: 0 0 8px gray;
 }
-
 .dnd-card:active {
   cursor: grabbing;
 }
-
 .dnd-card.solved {
   opacity: 0.65;
   cursor: default;
@@ -629,4 +636,4 @@ body {
 
 .modal-dnd #btn_dnd_new_round {
   margin-top: 28px;
-}
+}/*# sourceMappingURL=style.css.map */

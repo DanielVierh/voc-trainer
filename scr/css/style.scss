@@ -26,11 +26,15 @@ body {
 //////////////////////////////////
 .home {
   z-index: $z-homepage;
-  overflow-y: scroll;
-  padding: 50px 0 100px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding: 50px 0 0 0;
   text-align: center;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
 
   h1 {
     color: white;
@@ -41,6 +45,12 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 0 auto;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0 120px 0;
   }
 }
 
@@ -53,22 +63,33 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
   z-index: 1000;
   background: white;
   backdrop-filter: blur(30px);
   max-width: 800px;
   margin: 0 auto;
   box-shadow: 0 0 15px black;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .modal {
-  transform: translateY(200%);
-  transition: all 0.6s ease-in-out;
   @include modal_view;
+  top: 110vh;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    top 0.6s ease-in-out,
+    opacity 0.25s ease-in-out;
+  padding: 60px 12px 90px 12px;
 
   &.active {
-    transform: translateY(0);
+    top: 0;
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
@@ -371,13 +392,7 @@ body {
 }
 
 .modal-new-words {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
-  height: 100%;
 
   .NewWords {
     background-color: rgb(186, 205, 218);
@@ -408,12 +423,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 0;
     width: 100%;
 
     form {
       width: 100%;
-      margin-top: 50px;
+      margin-top: 30px;
 
       label {
         color: black;
@@ -465,7 +480,9 @@ body {
     align-items: center;
     width: 100%;
     height: 70vh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 
     h2 {
       color: black;
