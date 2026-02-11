@@ -21,6 +21,13 @@ const modal_random_cards = document.getElementById("modal_random_cards");
 const btn_start_random_cards = document.getElementById(
   "btn_start_random_cards",
 );
+const btn_box_1 = document.getElementById("btn_box_1");
+const btn_box_2 = document.getElementById("btn_box_2");
+const btn_box_3 = document.getElementById("btn_box_3");
+const btn_box_4 = document.getElementById("btn_box_4");
+const btn_card_known = document.getElementById("btn_card_known");
+const btn_card_unknown = document.getElementById("btn_card_unknown");
+const btn_next_card = document.getElementById("btn_next_card");
 const modal_mini = document.getElementById("modal_mini");
 const btn_close_miniModal = document.getElementById("btn_close_miniModal");
 const btn_audio_output = document.getElementById("btn_audio_output");
@@ -42,6 +49,10 @@ let current_language_code = "";
 let current_word = "";
 let current_word_id = -1;
 
+let current_card_word_id = null;
+let selected_card_box = null; // 1-4, null = Random über alle Fächer
+let current_card_box = null; // 1-4 (Fach der aktuell gezogenen Karte)
+
 let voc_Saveobject = {
   languagePacks: [],
   showLanguage: "",
@@ -51,7 +62,7 @@ let voc_Saveobject = {
 //*ANCHOR - Init
 //////////////////////////////
 
-window.onload = init();
+window.addEventListener("load", init);
 
 function init() {
   load_Data_from_LocalStorage();
@@ -127,6 +138,7 @@ function load_Data_from_LocalStorage() {
   if (localStorage.getItem("vocTrainer_save_Object") != null) {
     voc_Saveobject = JSON.parse(localStorage.getItem("vocTrainer_save_Object"));
     try {
+      migrate_and_sync_leitner_data();
       renderLanguages();
       backup(voc_Saveobject);
     } catch (error) {}
@@ -139,6 +151,223 @@ function load_Data_from_LocalStorage() {
     };
     backup(voc_Saveobject);
   }
+}
+
+function migrate_and_sync_leitner_data() {
+  if (!voc_Saveobject || !Array.isArray(voc_Saveobject.languagePacks)) return;
+
+  for (const pack of voc_Saveobject.languagePacks) {
+    if (!pack) continue;
+    if (!Array.isArray(pack.word_DB)) pack.word_DB = [];
+    if (!Array.isArray(pack.level_1_DB)) pack.level_1_DB = [];
+    if (!Array.isArray(pack.level_2_DB)) pack.level_2_DB = [];
+    if (!Array.isArray(pack.level_3_DB)) pack.level_3_DB = [];
+    if (!Array.isArray(pack.level_4_DB)) pack.level_4_DB = [];
+    if (!Array.isArray(pack.testfail_DB)) pack.testfail_DB = [];
+
+    // Entferne verwaiste Einträge (Wörter, die nicht mehr in word_DB existieren)
+    const existingIds = new Set(
+      pack.word_DB.map((w) => w?.wordId).filter(Boolean),
+    );
+    const filterToExisting = (arr) =>
+      arr.filter((w) => w && existingIds.has(w.wordId));
+    pack.level_1_DB = filterToExisting(pack.level_1_DB);
+    pack.level_2_DB = filterToExisting(pack.level_2_DB);
+    pack.level_3_DB = filterToExisting(pack.level_3_DB);
+    pack.level_4_DB = filterToExisting(pack.level_4_DB);
+    pack.testfail_DB = filterToExisting(pack.testfail_DB);
+
+    // Wenn ein Wort in keinem Fach liegt, landet es in Fach 1
+    for (const word of pack.word_DB) {
+      if (!word || !word.wordId) continue;
+      if (find_box_for_word(pack, word.wordId) == null) {
+        pack.level_1_DB.push(word);
+      }
+    }
+
+    // Safety: Wort darf nur in einem Fach liegen
+    dedupe_word_across_boxes(pack);
+  }
+
+  save_Data_into_LocalStorage();
+}
+
+function find_box_for_word(pack, wordId) {
+  if (!pack || !wordId) return null;
+  const inArr = (arr) =>
+    Array.isArray(arr) && arr.some((w) => w?.wordId === wordId);
+  if (inArr(pack.level_1_DB)) return 1;
+  if (inArr(pack.level_2_DB)) return 2;
+  if (inArr(pack.level_3_DB)) return 3;
+  if (inArr(pack.level_4_DB)) return 4;
+  return null;
+}
+
+function get_box_array(pack, box) {
+  if (!pack) return null;
+  if (box === 1) return pack.level_1_DB;
+  if (box === 2) return pack.level_2_DB;
+  if (box === 3) return pack.level_3_DB;
+  if (box === 4) return pack.level_4_DB;
+  return null;
+}
+
+function remove_word_from_all_boxes(pack, wordId) {
+  const removeFrom = (arr) => {
+    if (!Array.isArray(arr)) return;
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (arr[i]?.wordId === wordId) arr.splice(i, 1);
+    }
+  };
+  removeFrom(pack.level_1_DB);
+  removeFrom(pack.level_2_DB);
+  removeFrom(pack.level_3_DB);
+  removeFrom(pack.level_4_DB);
+  removeFrom(pack.testfail_DB);
+}
+
+function dedupe_word_across_boxes(pack) {
+  const seen = new Set();
+  const boxes = [
+    pack.level_1_DB,
+    pack.level_2_DB,
+    pack.level_3_DB,
+    pack.level_4_DB,
+  ];
+  for (const arr of boxes) {
+    if (!Array.isArray(arr)) continue;
+    for (let i = arr.length - 1; i >= 0; i--) {
+      const id = arr[i]?.wordId;
+      if (!id) {
+        arr.splice(i, 1);
+        continue;
+      }
+      if (seen.has(id)) arr.splice(i, 1);
+      else seen.add(id);
+    }
+  }
+}
+
+function get_current_pack() {
+  const langId = voc_Saveobject?.currentId;
+  if (!langId) return null;
+  for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
+    if (voc_Saveobject.languagePacks[i].id === langId)
+      return voc_Saveobject.languagePacks[i];
+  }
+  return null;
+}
+
+function start_cards_for_box(box) {
+  const pack = get_current_pack();
+  if (!pack) return;
+
+  migrate_and_sync_leitner_data();
+
+  selected_card_box = box;
+  current_card_box = box;
+  Modal.open_modal(modal_random_cards);
+
+  const labelBase =
+    voc_Saveobject?.showLanguage ||
+    document.getElementById("lngLabel")?.innerHTML ||
+    "";
+  document.getElementById("card_lang_label").innerHTML = labelBase
+    ? `${labelBase} – Fach ${box}`
+    : `Fach ${box}`;
+
+  draw_next_card();
+}
+
+function start_cards_random() {
+  const pack = get_current_pack();
+  if (!pack) return;
+
+  migrate_and_sync_leitner_data();
+
+  selected_card_box = null;
+  current_card_box = null;
+  Modal.open_modal(modal_random_cards);
+  document.getElementById("card_lang_label").innerHTML =
+    voc_Saveobject?.showLanguage || "";
+
+  draw_next_card();
+}
+
+function get_all_box_cards(pack) {
+  const all = [];
+  const pushAll = (arr) => {
+    if (!Array.isArray(arr)) return;
+    for (const w of arr) if (w && w.wordId) all.push(w);
+  };
+  pushAll(pack.level_1_DB);
+  pushAll(pack.level_2_DB);
+  pushAll(pack.level_3_DB);
+  pushAll(pack.level_4_DB);
+  return all;
+}
+
+function draw_next_card() {
+  const pack = get_current_pack();
+  if (!pack) return;
+
+  let source = null;
+  if (selected_card_box) {
+    source = get_box_array(pack, selected_card_box);
+  } else {
+    source = get_all_box_cards(pack);
+  }
+
+  if (!source || source.length === 0) {
+    current_card_word_id = null;
+    document.getElementById("crdFront").innerHTML = "Keine Karten vorhanden";
+    document.getElementById("crdBack").innerHTML = "";
+    return;
+  }
+
+  const rnd = getRandomInt(source.length);
+  const word = source[rnd];
+  current_card_word_id = word.wordId;
+
+  // Fach der gezogenen Karte merken (für die Verschiebe-Logik)
+  current_card_box = find_box_for_word(pack, current_card_word_id);
+
+  // Reset Flip + Animation
+  card?.classList.remove("is-flipped");
+  card?.classList.remove("fly-in");
+  setTimeout(() => {
+    card?.classList.add("fly-in");
+  }, 50);
+
+  document.getElementById("crdFront").innerHTML = word.ownLangWord;
+  document.getElementById("crdBack").innerHTML = word.foreignLangWord;
+}
+
+function answer_current_card(known) {
+  const pack = get_current_pack();
+  if (!pack || !current_card_word_id) return;
+
+  const fromBox =
+    current_card_box || find_box_for_word(pack, current_card_word_id) || 1;
+
+  let targetBox = fromBox;
+  if (known) targetBox = Math.min(fromBox + 1, 4);
+  else targetBox = Math.max(fromBox - 1, 1);
+
+  remove_word_from_all_boxes(pack, current_card_word_id);
+  const wordObj = pack.word_DB.find((w) => w?.wordId === current_card_word_id);
+  if (wordObj) {
+    const targetArr = get_box_array(pack, targetBox);
+    if (targetArr) targetArr.push(wordObj);
+  }
+
+  dedupe_word_across_boxes(pack);
+  updateSaveObj(voc_Saveobject);
+
+  // Im Random-Modus wird current_card_box beim nächsten Draw neu gesetzt
+  if (!selected_card_box) current_card_box = null;
+
+  draw_next_card();
 }
 
 //////////////////////////////
@@ -222,9 +451,22 @@ btn_open_cardmenu.addEventListener("click", () => {
   Modal.open_modal(modal_cards_menu);
 });
 btn_start_random_cards.addEventListener("click", () => {
-  Modal.open_modal(modal_random_cards);
-  get_random_card();
+  start_cards_random();
 });
+
+if (btn_box_1)
+  btn_box_1.addEventListener("click", () => start_cards_for_box(1));
+if (btn_box_2)
+  btn_box_2.addEventListener("click", () => start_cards_for_box(2));
+if (btn_box_3)
+  btn_box_3.addEventListener("click", () => start_cards_for_box(3));
+if (btn_box_4)
+  btn_box_4.addEventListener("click", () => start_cards_for_box(4));
+
+if (btn_card_known)
+  btn_card_known.addEventListener("click", () => answer_current_card(true));
+if (btn_card_unknown)
+  btn_card_unknown.addEventListener("click", () => answer_current_card(false));
 
 //////////////////////////////
 //*ANCHOR - Toggle Add Button
@@ -448,9 +690,14 @@ if (btn_Save_new_Vocable) {
     if (word.length !== "" && translation !== "") {
       for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         if (voc_Saveobject.languagePacks[i].id === langId) {
-          voc_Saveobject.languagePacks[i].word_DB.push(
-            new Vocable(word, translation, create_Id(), 0),
-          );
+          const newVoc = new Vocable(word, translation, create_Id(), 0);
+          voc_Saveobject.languagePacks[i].word_DB.push(newVoc);
+          // Jedes neue Wort startet in Fach 1
+          if (!Array.isArray(voc_Saveobject.languagePacks[i].level_1_DB)) {
+            voc_Saveobject.languagePacks[i].level_1_DB = [];
+          }
+          voc_Saveobject.languagePacks[i].level_1_DB.push(newVoc);
+          dedupe_word_across_boxes(voc_Saveobject.languagePacks[i]);
           updateSaveObj(voc_Saveobject);
           break;
         }
@@ -524,6 +771,11 @@ btn_delete_word.addEventListener("click", () => {
         if (
           current_word_id === voc_Saveobject.languagePacks[i].word_DB[j].wordId
         ) {
+          // Aus allen Fächern entfernen
+          remove_word_from_all_boxes(
+            voc_Saveobject.languagePacks[i],
+            current_word_id,
+          );
           voc_Saveobject.languagePacks[i].word_DB.splice(j, 1);
           save_Data_into_LocalStorage();
           Modal.close_all_modals();
@@ -608,18 +860,14 @@ function flipCard() {
 }
 
 function get_random_card() {
-  const rnd_card_numb = getRandomInt(allVocables.length);
-  document.getElementById("crdFront").innerHTML =
-    allVocables[rnd_card_numb].ownLangWord;
-  document.getElementById("crdBack").innerHTML =
-    allVocables[rnd_card_numb].foreignLangWord;
+  // Legacy-Funktion (z.B. falls irgendwo noch genutzt)
+  draw_next_card();
 }
 
-document.getElementById("btn_next_card").addEventListener("click", () => {
-  card.classList.remove("is-flipped");
-  card.classList.remove("fly-in");
-  setTimeout(() => {
-    card.classList.add("fly-in");
-    get_random_card();
-  }, 200);
-});
+if (btn_next_card) {
+  btn_next_card.addEventListener("click", () => {
+    // Falls der Button wieder eingefügt wird, nutze ihn als "nächste Karte" ohne Bewertung.
+    card?.classList.remove("is-flipped");
+    draw_next_card();
+  });
+}
