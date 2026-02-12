@@ -773,6 +773,7 @@ class Modal {
     modal_dnd_result,
     modal_random_cards,
     modal_settings_menu,
+    modal_learning_modes,
   ];
   static open_modal(modal) {
     this.close_all_modals();
