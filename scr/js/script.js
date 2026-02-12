@@ -370,6 +370,39 @@ function get_current_pack() {
   return null;
 }
 
+function update_card_menu_counts() {
+  // Counts im Karteikarten-Menü aktualisieren (Fächer + Gesamt)
+  try {
+    migrate_and_sync_leitner_data();
+  } catch (e) {
+    // ignore
+  }
+
+  const pack = get_current_pack();
+  const count_unique = (arr) => {
+    if (!Array.isArray(arr)) return 0;
+    const ids = new Set();
+    for (const w of arr) {
+      const id = w?.wordId;
+      if (id) ids.add(id);
+    }
+    return ids.size;
+  };
+
+  const c1 = pack ? count_unique(pack.level_1_DB) : 0;
+  const c2 = pack ? count_unique(pack.level_2_DB) : 0;
+  const c3 = pack ? count_unique(pack.level_3_DB) : 0;
+  const c4 = pack ? count_unique(pack.level_4_DB) : 0;
+  const total = c1 + c2 + c3 + c4;
+
+  if (btn_start_random_cards)
+    btn_start_random_cards.textContent = `Zufallskarten (${total})`;
+  if (btn_box_1) btn_box_1.textContent = `Karteikarten Fach 1 (${c1})`;
+  if (btn_box_2) btn_box_2.textContent = `Karteikarten Fach 2 (${c2})`;
+  if (btn_box_3) btn_box_3.textContent = `Karteikarten Fach 3 (${c3})`;
+  if (btn_box_4) btn_box_4.textContent = `Karteikarten Fach 4 (${c4})`;
+}
+
 function start_cards_for_box(box) {
   const pack = get_current_pack();
   if (!pack) return;
@@ -475,6 +508,7 @@ function answer_current_card(known) {
 
   dedupe_word_across_boxes(pack);
   updateSaveObj(voc_Saveobject);
+  update_card_menu_counts();
 
   // Im Random-Modus wird current_card_box beim nächsten Draw neu gesetzt
   if (!selected_card_box) current_card_box = null;
@@ -562,6 +596,7 @@ close_until_langs.forEach((btn) => {
 });
 
 btn_open_cardmenu.addEventListener("click", () => {
+  update_card_menu_counts();
   Modal.open_modal(modal_cards_menu);
 });
 
@@ -1209,6 +1244,7 @@ function renderLanguages() {
         label_transl.innerHTML = this.innerHTML;
         current_language_code = voc_Saveobject.languagePacks[i].language_code;
         allVocables = voc_Saveobject.languagePacks[i].word_DB;
+        update_card_menu_counts();
       }, 200);
     };
     langContainer.appendChild(languageButton);
@@ -1383,6 +1419,7 @@ if (btn_Save_new_Vocable) {
           pack.level_1_DB.push(newVoc);
           dedupe_word_across_boxes(pack);
           updateSaveObj(voc_Saveobject);
+          update_card_menu_counts();
           showToast("Vokabel hinzugefügt (Fach 1)");
           break;
         }
@@ -1463,6 +1500,7 @@ btn_delete_word.addEventListener("click", () => {
           );
           voc_Saveobject.languagePacks[i].word_DB.splice(j, 1);
           save_Data_into_LocalStorage();
+          update_card_menu_counts();
           Modal.close_all_modals();
           Modal.open_modal(modal_words);
           showWords();
