@@ -26,6 +26,15 @@ const wordsWrapper = document.getElementById("wordsWrapper");
 const modal_cards_menu = document.getElementById("modal_cards_menu");
 const btn_open_cardmenu = document.getElementById("btn_open_cardmenu");
 const modal_random_cards = document.getElementById("modal_random_cards");
+const btn_open_learning_modes = document.getElementById(
+  "btn_open_learning_modes",
+);
+const modal_learning_modes = document.getElementById("modal_learning_modes");
+const learning_mode_lang_label = document.getElementById(
+  "learning_mode_lang_label",
+);
+const btn_mode_buttons = document.getElementById("btn_mode_buttons");
+const btn_mode_type = document.getElementById("btn_mode_type");
 const btn_start_random_cards = document.getElementById(
   "btn_start_random_cards",
 );
@@ -36,6 +45,9 @@ const btn_box_4 = document.getElementById("btn_box_4");
 const btn_card_known = document.getElementById("btn_card_known");
 const btn_card_unknown = document.getElementById("btn_card_unknown");
 const btn_next_card = document.getElementById("btn_next_card");
+const type_answer_area = document.getElementById("type_answer_area");
+const inp_card_answer = document.getElementById("inp_card_answer");
+const btn_check_answer = document.getElementById("btn_check_answer");
 const modal_mini = document.getElementById("modal_mini");
 const btn_close_miniModal = document.getElementById("btn_close_miniModal");
 const btn_audio_output = document.getElementById("btn_audio_output");
@@ -62,6 +74,8 @@ let current_word_id = -1;
 let current_card_word_id = null;
 let selected_card_box = null; // 1-4, null = Random über alle Fächer
 let current_card_box = null; // 1-4 (Fach der aktuell gezogenen Karte)
+
+let typedAnswerCheckedThisCard = false;
 
 let voc_Saveobject = {
   languagePacks: [],
@@ -285,6 +299,7 @@ function migrate_and_sync_leitner_data() {
 
   for (const pack of voc_Saveobject.languagePacks) {
     if (!pack) continue;
+    if (!pack.learningMode) pack.learningMode = "buttons";
     if (!Array.isArray(pack.word_DB)) pack.word_DB = [];
     if (!Array.isArray(pack.level_1_DB)) pack.level_1_DB = [];
     if (!Array.isArray(pack.level_2_DB)) pack.level_2_DB = [];
@@ -385,6 +400,41 @@ function get_current_pack() {
   return null;
 }
 
+function get_current_learning_mode() {
+  const pack = get_current_pack();
+  return pack?.learningMode === "type" ? "type" : "buttons";
+}
+
+function update_card_learning_mode_ui() {
+  const typeMode = get_current_learning_mode() === "type";
+  if (type_answer_area) type_answer_area.hidden = !typeMode;
+  if (inp_card_answer) {
+    inp_card_answer.value = "";
+    inp_card_answer.disabled = false;
+    inp_card_answer.setAttribute("aria-hidden", typeMode ? "false" : "true");
+  }
+  if (btn_check_answer) {
+    btn_check_answer.disabled = false;
+    btn_check_answer.setAttribute("aria-hidden", typeMode ? "false" : "true");
+  }
+
+  if (typeMode) {
+    set_card_answer_buttons_visible(false);
+  }
+
+  typedAnswerCheckedThisCard = false;
+  if (typeMode) {
+    // Fokus erst nach DOM-Update/Modal-Animation
+    setTimeout(() => {
+      try {
+        inp_card_answer?.focus();
+      } catch (e) {
+        // ignore
+      }
+    }, 150);
+  }
+}
+
 function update_card_menu_counts() {
   // Counts im Karteikarten-Menü aktualisieren (Fächer + Gesamt)
   try {
@@ -428,6 +478,7 @@ function start_cards_for_box(box) {
   current_card_box = box;
   Modal.open_modal(modal_random_cards);
   reset_card_reveal_state();
+  update_card_learning_mode_ui();
 
   const labelBase =
     voc_Saveobject?.showLanguage ||
@@ -450,6 +501,7 @@ function start_cards_random() {
   current_card_box = null;
   Modal.open_modal(modal_random_cards);
   reset_card_reveal_state();
+  update_card_learning_mode_ui();
   document.getElementById("card_lang_label").innerHTML =
     voc_Saveobject?.showLanguage || "";
 
@@ -474,6 +526,7 @@ function draw_next_card() {
   if (!pack) return;
 
   reset_card_reveal_state();
+  update_card_learning_mode_ui();
 
   let source = null;
   if (selected_card_box) {
@@ -505,6 +558,139 @@ function draw_next_card() {
 
   document.getElementById("crdFront").innerHTML = word.ownLangWord;
   document.getElementById("crdBack").innerHTML = word.foreignLangWord;
+}
+
+function get_current_card_word(pack) {
+  if (!pack || !current_card_word_id) return null;
+  return (
+    (pack.word_DB || []).find((w) => w?.wordId === current_card_word_id) || null
+  );
+}
+
+function normalize_answer_text(text) {
+  return String(text || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+function strip_diacritics(text) {
+  try {
+    return String(text || "")
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "");
+  } catch (e) {
+    return String(text || "");
+  }
+}
+
+function edit_distance(a, b) {
+  const s = String(a);
+  const t = String(b);
+  const n = s.length;
+  const m = t.length;
+  if (n === 0) return m;
+  if (m === 0) return n;
+
+  const dp = new Array(m + 1);
+  for (let j = 0; j <= m; j++) dp[j] = j;
+
+  for (let i = 1; i <= n; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= m; j++) {
+      const tmp = dp[j];
+      const cost = s[i - 1] === t[j - 1] ? 0 : 1;
+      dp[j] = Math.min(dp[j] + 1, dp[j - 1] + 1, prev + cost);
+      prev = tmp;
+    }
+  }
+  return dp[m];
+}
+
+function get_possible_answers(correct) {
+  const raw = String(correct || "");
+  return raw
+    .split(/\s*(?:\/|;|\||,)\s*/g)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function is_answer_correct(userInput, correctText) {
+  const user = normalize_answer_text(userInput);
+  if (!user) return false;
+
+  const candidates = get_possible_answers(correctText);
+  if (candidates.length === 0) return false;
+
+  const userPlain = normalize_answer_text(strip_diacritics(user));
+
+  for (const c of candidates) {
+    const correct = normalize_answer_text(c);
+    if (!correct) continue;
+
+    if (user === correct) return true;
+
+    const correctPlain = normalize_answer_text(strip_diacritics(correct));
+    if (userPlain && correctPlain && userPlain === correctPlain) return true;
+
+    // toleranter Tippfehler-Check
+    const maxLen = Math.max(userPlain.length, correctPlain.length);
+    const threshold = maxLen <= 5 ? 1 : maxLen <= 10 ? 2 : 3;
+    if (edit_distance(userPlain, correctPlain) <= threshold) return true;
+  }
+  return false;
+}
+
+function reveal_card_back() {
+  if (!card) return;
+  card.classList.add("is-flipped");
+  cardBackSideIsVisible = true;
+  set_card_answer_buttons_visible(false);
+}
+
+function handle_typed_answer_submit() {
+  if (get_current_learning_mode() !== "type") return;
+  const pack = get_current_pack();
+  if (!pack) return;
+
+  const wordObj = get_current_card_word(pack);
+  if (!wordObj) return;
+
+  const userValue = inp_card_answer?.value || "";
+  if (!normalize_answer_text(userValue)) {
+    showToast("Bitte eine Antwort eingeben.");
+    return;
+  }
+
+  const correct = wordObj.foreignLangWord;
+  const ok = is_answer_correct(userValue, correct);
+  typedAnswerCheckedThisCard = true;
+
+  if (inp_card_answer) inp_card_answer.disabled = true;
+  if (btn_check_answer) btn_check_answer.disabled = true;
+
+  reveal_card_back();
+  showToast(ok ? "Richtig!" : `Falsch. Richtig: ${correct}`);
+
+  setTimeout(() => {
+    answer_current_card(ok);
+  }, 900);
+}
+
+if (btn_check_answer) {
+  btn_check_answer.addEventListener("click", () => {
+    handle_typed_answer_submit();
+  });
+}
+
+if (inp_card_answer) {
+  inp_card_answer.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handle_typed_answer_submit();
+    }
+  });
 }
 
 function answer_current_card(known) {
@@ -618,6 +804,44 @@ btn_open_cardmenu.addEventListener("click", () => {
   update_card_menu_counts();
   Modal.open_modal(modal_cards_menu);
 });
+
+function update_learning_modes_modal_ui() {
+  const pack = get_current_pack();
+  if (!learning_mode_lang_label) return;
+  learning_mode_lang_label.textContent = pack
+    ? `Aktives Sprachmodul: ${pack.language_Name}`
+    : "Bitte erst ein Sprachmodul auswählen.";
+}
+
+if (btn_open_learning_modes)
+  btn_open_learning_modes.addEventListener("click", () => {
+    update_learning_modes_modal_ui();
+    Modal.open_modal(modal_learning_modes);
+  });
+
+function set_learning_mode_for_current_pack(mode) {
+  const pack = get_current_pack();
+  if (!pack) {
+    showToast("Bitte erst ein Sprachmodul auswählen.");
+    return;
+  }
+  pack.learningMode = mode === "type" ? "type" : "buttons";
+  updateSaveObj(voc_Saveobject);
+  showToast(
+    pack.learningMode === "type" ? "Lernmodus: Tippen" : "Lernmodus: Buttons",
+  );
+  update_learning_modes_modal_ui();
+}
+
+if (btn_mode_buttons)
+  btn_mode_buttons.addEventListener("click", () => {
+    set_learning_mode_for_current_pack("buttons");
+  });
+
+if (btn_mode_type)
+  btn_mode_type.addEventListener("click", () => {
+    set_learning_mode_for_current_pack("type");
+  });
 
 if (btn_open_dnd_test) {
   btn_open_dnd_test.addEventListener("click", () => {
@@ -1134,11 +1358,13 @@ if (btn_box_4)
 
 if (btn_card_known)
   btn_card_known.addEventListener("click", () => {
+    if (get_current_learning_mode() === "type") return;
     if (!cardBackSideIsVisible) return;
     answer_current_card(true);
   });
 if (btn_card_unknown)
   btn_card_unknown.addEventListener("click", () => {
+    if (get_current_learning_mode() === "type") return;
     if (!cardBackSideIsVisible) return;
     answer_current_card(false);
   });
@@ -1651,6 +1877,10 @@ if (card) {
 }
 
 function flipCard() {
+  if (get_current_learning_mode() === "type" && !typedAnswerCheckedThisCard) {
+    showToast("Bitte erst die Antwort tippen.");
+    return;
+  }
   card.classList.toggle("is-flipped");
   if (cardBackSideIsVisible === false) {
     cardBackSideIsVisible = true;

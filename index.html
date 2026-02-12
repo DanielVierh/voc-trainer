@@ -186,6 +186,22 @@
         <div class="actionbutton actionbutton--box4" id="btn_box_4">
           Karteikarten Fach 4
         </div>
+
+        <div class="actionbutton" id="btn_open_learning_modes">Lernmodi</div>
+      </div>
+    </div>
+
+    <!-- /////////////////////////////////////////////// -->
+    <!-- * Lernmodi -->
+    <!-- /////////////////////////////////////////////// -->
+    <div class="modal modal-learning-modes" id="modal_learning_modes">
+      <div class="close-Modal">Fertig</div>
+      <h1>Lernmodi</h1>
+      <div class="wrapper">
+        <div class="status-label" id="learning_mode_lang_label"></div>
+        <br />
+        <div class="actionbutton" id="btn_mode_buttons">Standard (Buttons)</div>
+        <div class="actionbutton" id="btn_mode_type">Tippen</div>
       </div>
     </div>
 
@@ -202,6 +218,19 @@
             <div class="card__face card__face--back" id="crdBack">back</div>
           </div>
         </div>
+
+        <div class="type-answer" id="type_answer_area" hidden>
+          <input
+            id="inp_card_answer"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="Übersetzung tippen…"
+          />
+          <div class="actionbutton" id="btn_check_answer">Prüfen</div>
+        </div>
+
         <div
           class="actionbutton answer-btn answer-known"
           id="btn_card_known"

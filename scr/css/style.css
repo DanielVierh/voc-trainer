@@ -125,7 +125,7 @@ a {
 }
 
 .modal-cards .btn-wrapper {
-  margin-top: 150px;
+  margin-top: 30px;
 }
 
 .modal-settings-menu {
@@ -204,6 +204,29 @@ a {
   background: linear-gradient(135deg, rgba(43, 107, 255, 0.18), rgba(12, 16, 32, 0.82));
   color: rgba(234, 240, 255, 0.92);
   transform: rotateY(180deg);
+}
+.modal-rndCards .type-answer {
+  width: 90vw;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: -40px 0 16px;
+}
+.modal-rndCards .type-answer input {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  font-size: 1.1em;
+  text-align: center;
+  background: rgba(20, 26, 48, 0.72);
+  color: rgba(234, 240, 255, 0.92);
+  border: 1px solid rgba(234, 240, 255, 0.14);
+  box-shadow: 0 0 22px rgba(0, 245, 255, 0.09), 0 0 22px rgba(59, 130, 246, 0.06);
+  outline: none;
+}
+.modal-rndCards .type-answer input:focus {
+  box-shadow: 0 0 0 1px rgba(234, 240, 255, 0.14), 0 0 26px rgba(0, 245, 255, 0.12), 0 0 24px rgba(59, 130, 246, 0.09);
 }
 .modal-rndCards .answer-btn {
   display: none;
