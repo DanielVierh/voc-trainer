@@ -41,6 +41,7 @@ const btn_close_miniModal = document.getElementById("btn_close_miniModal");
 const btn_audio_output = document.getElementById("btn_audio_output");
 const btn_delete_word = document.getElementById("btn_delete_word");
 const modal_settings_menu = document.getElementById("modal_settings_menu");
+const btn_delete_language = document.getElementById("btn_delete_language");
 const btn_delete_everything = document.getElementById("btn_delete_everything");
 
 const btn_translate = document.getElementById("btn_translate");
@@ -1574,8 +1575,49 @@ function text_to_speech(lang_code, text) {
 }
 
 btn_settings.addEventListener("click", () => {
+  update_settings_language_delete_ui();
   Modal.open_modal(modal_settings_menu);
 });
+
+function update_settings_language_delete_ui() {
+  if (!btn_delete_language) return;
+  const pack = get_current_pack();
+  const canDelete = Boolean(pack && voc_Saveobject?.currentId);
+  btn_delete_language.hidden = !canDelete;
+  if (canDelete) {
+    btn_delete_language.textContent = `Sprachmodul löschen (${pack.language_Name})`;
+  } else {
+    btn_delete_language.textContent = "Sprachmodul löschen";
+  }
+}
+
+if (btn_delete_language) {
+  btn_delete_language.addEventListener("click", () => {
+    const pack = get_current_pack();
+    if (!pack) {
+      showToast("Kein aktives Sprachmodul ausgewählt.");
+      update_settings_language_delete_ui();
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      `Soll das Sprachmodul "${pack.language_Name}" wirklich gelöscht werden?\n\nAlle zugehörigen Vokabeln und Karteikartenstände werden entfernt.`,
+    );
+    if (!confirmDelete) return;
+
+    const langId = pack.id;
+    voc_Saveobject.languagePacks = (voc_Saveobject.languagePacks || []).filter(
+      (p) => p?.id !== langId,
+    );
+    if (voc_Saveobject.currentId === langId) {
+      voc_Saveobject.currentId = "";
+      voc_Saveobject.showLanguage = "";
+    }
+
+    updateSaveObj(voc_Saveobject);
+    location.reload();
+  });
+}
 
 btn_delete_everything.addEventListener("click", () => {
   const confirm = window.confirm("Sollen alle Daten gelöscht werden?");
