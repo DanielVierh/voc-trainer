@@ -1347,17 +1347,41 @@ if (btn_Save_new_Vocable) {
     const translation = inp_word_foreign.value;
     const langId = voc_Saveobject.currentId;
 
-    if (word.length !== "" && translation !== "") {
+    const normalize_word = (s) =>
+      String(s || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+    if (normalize_word(word) !== "" && normalize_word(translation) !== "") {
       for (let i = 0; i < voc_Saveobject.languagePacks.length; i++) {
         if (voc_Saveobject.languagePacks[i].id === langId) {
-          const newVoc = new Vocable(word, translation, create_Id(), 0);
-          voc_Saveobject.languagePacks[i].word_DB.push(newVoc);
-          // Jedes neue Wort startet in Fach 1
-          if (!Array.isArray(voc_Saveobject.languagePacks[i].level_1_DB)) {
-            voc_Saveobject.languagePacks[i].level_1_DB = [];
+          const pack = voc_Saveobject.languagePacks[i];
+          const nOwn = normalize_word(word);
+          const nFor = normalize_word(translation);
+          const alreadyExists = (pack.word_DB || []).some((w) => {
+            const eOwn = normalize_word(w?.ownLangWord);
+            const eFor = normalize_word(w?.foreignLangWord);
+            // Mindestens das eigene Wort doppelt verhindern; exaktes Paar ebenfalls.
+            return (
+              (nOwn && eOwn === nOwn) ||
+              (nOwn && nFor && eOwn === nOwn && eFor === nFor)
+            );
+          });
+
+          if (alreadyExists) {
+            showToast("Diese Vokabel existiert bereits.");
+            return;
           }
-          voc_Saveobject.languagePacks[i].level_1_DB.push(newVoc);
-          dedupe_word_across_boxes(voc_Saveobject.languagePacks[i]);
+
+          const newVoc = new Vocable(word, translation, create_Id(), 0);
+          pack.word_DB.push(newVoc);
+          // Jedes neue Wort startet in Fach 1
+          if (!Array.isArray(pack.level_1_DB)) {
+            pack.level_1_DB = [];
+          }
+          pack.level_1_DB.push(newVoc);
+          dedupe_word_across_boxes(pack);
           updateSaveObj(voc_Saveobject);
           showToast("Vokabel hinzugefügt (Fach 1)");
           break;
