@@ -185,6 +185,38 @@ a {
   align-items: center;
   justify-content: center;
 }
+
+.modal-rndCards .answer-btn {
+  display: none;
+}
+
+.modal-rndCards .answer-btn.is-visible {
+  display: flex;
+}
+
+.modal-rndCards .answer-known {
+  background: linear-gradient(
+    135deg,
+    rgba(57, 255, 20, 0.2),
+    rgba(0, 245, 255, 0.14)
+  );
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 26px rgba(57, 255, 20, 0.14),
+    0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.modal-rndCards .answer-unknown {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 59, 59, 0.22),
+    rgba(255, 43, 214, 0.14)
+  );
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 26px rgba(255, 59, 59, 0.14),
+    0 12px 40px rgba(0, 0, 0, 0.55);
+}
 .modal-rndCards .card {
   background-color: rgba(20, 26, 48, 0.72);
   font-weight: bold;

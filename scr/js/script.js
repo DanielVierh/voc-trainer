@@ -83,6 +83,20 @@ function showToast(message) {
   }, 1600);
 }
 
+function set_card_answer_buttons_visible(visible) {
+  const show = Boolean(visible);
+  const buttons = [btn_card_known, btn_card_unknown].filter(Boolean);
+  for (const b of buttons) {
+    b.classList.toggle("is-visible", show);
+    b.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+}
+
+function reset_card_reveal_state() {
+  cardBackSideIsVisible = false;
+  set_card_answer_buttons_visible(false);
+}
+
 //////////////////////////////
 //*ANCHOR - Init
 //////////////////////////////
@@ -412,6 +426,7 @@ function start_cards_for_box(box) {
   selected_card_box = box;
   current_card_box = box;
   Modal.open_modal(modal_random_cards);
+  reset_card_reveal_state();
 
   const labelBase =
     voc_Saveobject?.showLanguage ||
@@ -433,6 +448,7 @@ function start_cards_random() {
   selected_card_box = null;
   current_card_box = null;
   Modal.open_modal(modal_random_cards);
+  reset_card_reveal_state();
   document.getElementById("card_lang_label").innerHTML =
     voc_Saveobject?.showLanguage || "";
 
@@ -455,6 +471,8 @@ function get_all_box_cards(pack) {
 function draw_next_card() {
   const pack = get_current_pack();
   if (!pack) return;
+
+  reset_card_reveal_state();
 
   let source = null;
   if (selected_card_box) {
@@ -1114,9 +1132,15 @@ if (btn_box_4)
   btn_box_4.addEventListener("click", () => start_cards_for_box(4));
 
 if (btn_card_known)
-  btn_card_known.addEventListener("click", () => answer_current_card(true));
+  btn_card_known.addEventListener("click", () => {
+    if (!cardBackSideIsVisible) return;
+    answer_current_card(true);
+  });
 if (btn_card_unknown)
-  btn_card_unknown.addEventListener("click", () => answer_current_card(false));
+  btn_card_unknown.addEventListener("click", () => {
+    if (!cardBackSideIsVisible) return;
+    answer_current_card(false);
+  });
 
 //////////////////////////////
 //*ANCHOR - Toggle Add Button
@@ -1588,8 +1612,10 @@ function flipCard() {
   card.classList.toggle("is-flipped");
   if (cardBackSideIsVisible === false) {
     cardBackSideIsVisible = true;
+    set_card_answer_buttons_visible(true);
   } else {
     cardBackSideIsVisible = false;
+    set_card_answer_buttons_visible(false);
   }
 }
 
