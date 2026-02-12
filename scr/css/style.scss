@@ -33,6 +33,10 @@ body {
   background-color: #05060c;
 }
 
+a {
+  color: rgba(234, 240, 255, 0.92);
+}
+
 //////////////////////////////////
 ///* ANCHOR Home
 //////////////////////////////////
@@ -49,7 +53,8 @@ body {
   height: 100dvh;
 
   h1 {
-    color: white;
+    color: rgba(234, 240, 255, 0.92);
+    text-shadow: 0 0 18px rgba(0, 245, 255, 0.12);
   }
 
   .languageContainer {
@@ -84,6 +89,7 @@ body {
   margin: 0 auto;
   box-shadow:
     0 0 0 1px rgba(234, 240, 255, 0.14),
+    0 0 42px rgba(0, 245, 255, 0.08),
     0 18px 55px rgba(0, 0, 0, 0.65);
   border: 1px solid rgba(234, 240, 255, 0.14);
   overflow-y: auto;
@@ -124,21 +130,23 @@ body {
 }
 
 .modal-dnd-result.win {
-  background: linear-gradient(180deg, rgba(46, 125, 50, 0.18), white 55%);
+  background: linear-gradient(180deg, rgba(57, 255, 20, 0.12), $main-color 55%);
 }
 
 .modal-dnd-result.lose {
-  background: linear-gradient(180deg, rgba(198, 40, 40, 0.18), white 55%);
+  background: linear-gradient(180deg, rgba(255, 59, 59, 0.12), $main-color 55%);
 }
 
 .modal-dnd-result.win #dnd_result_title,
 .modal-dnd-result.win .dnd-result-score {
-  color: rgb(46, 125, 50);
+  color: #39ff14;
+  text-shadow: 0 0 18px rgba(57, 255, 20, 0.18);
 }
 
 .modal-dnd-result.lose #dnd_result_title,
 .modal-dnd-result.lose .dnd-result-score {
-  color: rgb(198, 40, 40);
+  color: #ff3b3b;
+  text-shadow: 0 0 18px rgba(255, 59, 59, 0.18);
 }
 
 .dnd-result-score {
@@ -181,7 +189,7 @@ body {
   justify-content: center;
 
   .card {
-    background-color: rgb(253, 255, 240);
+    background-color: rgba(20, 26, 48, 0.72);
     font-weight: bold;
     font-style: italic;
     min-height: 200px;
@@ -193,7 +201,12 @@ body {
     padding: 20px;
     margin: 80px 0;
     font-size: 1.3rem;
-    border: 1px solid black;
+    border: 1px solid rgba(234, 240, 255, 0.14);
+    box-shadow:
+      0 0 0 1px rgba(0, 245, 255, 0.12),
+      0 0 34px rgba(0, 245, 255, 0.11),
+      0 0 36px rgba(59, 130, 246, 0.08),
+      0 16px 45px rgba(0, 0, 0, 0.55);
     position: relative;
     cursor: pointer;
     transform-style: preserve-3d;
@@ -207,9 +220,9 @@ body {
       right: -17px;
       width: 26px;
       height: 40px;
-      background-color: white;
+      background-color: rgba(234, 240, 255, 0.08);
       transform: rotate(40deg);
-      border-bottom: 1px solid black;
+      border-bottom: 1px solid rgba(234, 240, 255, 0.14);
     }
 
     &.fly-in {
@@ -225,7 +238,7 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    color: white;
+    color: rgba(234, 240, 255, 0.92);
     word-wrap: break-word;
     text-align: center;
     font-weight: bold;
@@ -237,13 +250,47 @@ body {
   }
 
   .card__face--front {
-    background: rgb(14, 79, 97);
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.18), $main-color);
   }
 
   .card__face--back {
-    background: rgb(110, 184, 110);
-    color: black;
+    background: linear-gradient(135deg, rgba(43, 107, 255, 0.18), $main-color);
+    color: rgba(234, 240, 255, 0.92);
     transform: rotateY(180deg);
+  }
+
+  .answer-btn {
+    display: none;
+
+    &.is-visible {
+      display: flex;
+    }
+  }
+
+  .answer-known {
+    background: linear-gradient(
+      135deg,
+      rgba(57, 255, 20, 0.2),
+      rgba(0, 245, 255, 0.14)
+    );
+    box-shadow:
+      0 0 0 1px rgba(234, 240, 255, 0.12),
+      0 0 34px rgba(57, 255, 20, 0.16),
+      0 0 30px rgba(0, 245, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.55);
+  }
+
+  .answer-unknown {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 59, 59, 0.22),
+      rgba(255, 43, 214, 0.14)
+    );
+    box-shadow:
+      0 0 0 1px rgba(234, 240, 255, 0.12),
+      0 0 34px rgba(255, 59, 59, 0.16),
+      0 0 30px rgba(255, 43, 214, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -277,15 +324,24 @@ body {
   min-width: 180px;
   height: auto;
   min-height: 50px;
-  background-color: black;
-  color: white;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.22),
+    rgba(43, 107, 255, 0.18)
+  );
+  color: rgba(234, 240, 255, 0.92);
   text-align: center;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  box-shadow: 0 0 5px black;
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 34px rgba(0, 245, 255, 0.14),
+    0 0 34px rgba(59, 130, 246, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(234, 240, 255, 0.14);
   font-size: 1.2em;
   padding: 14px 28px;
   cursor: pointer;
@@ -296,11 +352,15 @@ body {
 }
 
 .close-Modal {
-  background-color: lightblue;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.35),
+    rgba(59, 130, 246, 0.22)
+  );
   width: 80px;
   align-self: center;
   margin-top: 10px;
-  color: black;
+  color: rgba(234, 240, 255, 0.92);
   font-weight: bold;
   display: flex;
   justify-content: center;
@@ -315,11 +375,15 @@ body {
 }
 
 .btn-translate {
-  background-color: blue;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.35),
+    rgba(43, 107, 255, 0.18)
+  );
   width: 100px;
   align-self: center;
   margin-top: 10px;
-  color: white;
+  color: rgba(234, 240, 255, 0.92);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -331,14 +395,14 @@ body {
 
 .languageBtn {
   text-decoration: none;
-  color: black;
+  color: rgba(234, 240, 255, 0.92);
   font-size: 1.5em;
   height: auto;
   min-height: 48px;
-  padding: 14px 20px;
+  padding: 28px 20px;
   margin-top: 40px;
   font-weight: bold;
-  background-color: rgb(185, 184, 184);
+  background: linear-gradient(180deg, rgba(20, 26, 48, 0.72), $main-color);
   width: 260px;
   text-align: center;
   display: flex;
@@ -346,17 +410,26 @@ body {
   align-items: center;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 0 20px black;
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 40px rgba(255, 43, 214, 0.11),
+    0 0 34px rgba(0, 245, 255, 0.07),
+    0 16px 45px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(234, 240, 255, 0.14);
   transition: all 0.4s ease;
   cursor: pointer;
 
   &:hover {
-    box-shadow: 0 0 5px black;
+    box-shadow:
+      0 0 0 1px rgba(234, 240, 255, 0.16),
+      0 0 42px rgba(0, 245, 255, 0.22),
+      0 0 36px rgba(59, 130, 246, 0.1),
+      0 18px 55px rgba(0, 0, 0, 0.65);
   }
 }
 
 .button-q {
-  background-color: white;
+  background: rgba(20, 26, 48, 0.72);
   padding: 10px;
   border-radius: 50%;
   display: flex;
@@ -364,6 +437,10 @@ body {
   align-items: center;
   text-align: center;
   cursor: pointer;
+  border: 1px solid rgba(234, 240, 255, 0.14);
+  box-shadow:
+    0 0 28px rgba(0, 245, 255, 0.1),
+    0 0 26px rgba(59, 130, 246, 0.08);
 }
 
 .middle-btn {
@@ -371,7 +448,11 @@ body {
   padding: 25px;
   transition: all 0.6s ease-in-out;
   cursor: pointer;
-  box-shadow: 0 0 25px gray;
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 42px rgba(0, 245, 255, 0.14),
+    0 0 34px rgba(59, 130, 246, 0.08),
+    0 18px 55px rgba(0, 0, 0, 0.65);
 
   &.active {
     transform: translateY(0);
@@ -379,8 +460,12 @@ body {
 }
 
 .button-add {
-  background-color: $main-color;
-  color: white;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.22),
+    rgba(43, 107, 255, 0.18)
+  );
+  color: rgba(234, 240, 255, 0.92);
   margin: 50px auto;
   cursor: pointer;
 }
@@ -395,9 +480,10 @@ body {
   right: 0;
   height: 70px;
   background: linear-gradient(
-    to bottom,
-    rgba(0, 174, 255, 0.683),
-    rgba(34, 53, 63, 0.9)
+    90deg,
+    rgba(0, 245, 255, 0.22),
+    rgba(59, 130, 246, 0.18),
+    rgba(43, 107, 255, 0.18)
   );
   backdrop-filter: blur(4px);
   z-index: $z-footer-nav;
@@ -407,6 +493,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   border-radius: 15px 15px 0 0;
+  border: 1px solid rgba(234, 240, 255, 0.12);
 }
 
 .modal-new-words {
@@ -428,7 +515,7 @@ body {
   h1 {
     font-size: 2.5em;
     text-align: center;
-    color: black;
+    color: rgba(234, 240, 255, 0.92);
     z-index: 1000;
     position: fixed;
     top: 20px;
@@ -449,7 +536,7 @@ body {
       margin-top: 30px;
 
       label {
-        color: black;
+        color: rgba(234, 240, 255, 0.7);
         margin: 0 auto;
         font-weight: bold;
       }
@@ -461,6 +548,12 @@ body {
         font-size: 1.2em;
         margin: 0 auto;
         text-align: center;
+        background: rgba(20, 26, 48, 0.72);
+        color: rgba(234, 240, 255, 0.92);
+        border: 1px solid rgba(234, 240, 255, 0.14);
+        box-shadow:
+          0 0 22px rgba(0, 245, 255, 0.09),
+          0 0 22px rgba(59, 130, 246, 0.06);
       }
 
       select {
@@ -470,17 +563,31 @@ body {
         font-size: 1.2em;
         margin: 0 auto;
         text-align: center;
+        background: rgba(20, 26, 48, 0.72);
+        color: rgba(234, 240, 255, 0.92);
+        border: 1px solid rgba(234, 240, 255, 0.14);
+        box-shadow:
+          0 0 22px rgba(255, 43, 214, 0.08),
+          0 0 18px rgba(59, 130, 246, 0.05);
       }
     }
   }
 
   .savebutton {
     padding: 14px 22px;
-    background-color: green;
-    color: lightgreen;
+    background: linear-gradient(
+      135deg,
+      rgba(57, 255, 20, 0.18),
+      rgba(0, 245, 255, 0.14)
+    );
+    color: rgba(234, 240, 255, 0.92);
     font-weight: bold;
     letter-spacing: 1.5px;
-    box-shadow: 0 0 10px gray;
+    box-shadow:
+      0 0 0 1px rgba(234, 240, 255, 0.12),
+      0 0 34px rgba(57, 255, 20, 0.14),
+      0 0 30px rgba(0, 245, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.55);
     border-radius: 10px;
     cursor: pointer;
   }
@@ -503,15 +610,15 @@ body {
     touch-action: pan-y;
 
     h2 {
-      color: black;
+      color: rgba(234, 240, 255, 0.92);
     }
 
     .row {
       display: flex;
       width: 100%;
-      background-color: black;
+      background: rgba(20, 26, 48, 0.72);
       justify-content: space-around;
-      border: 1px solid teal;
+      border: 1px solid rgba(0, 245, 255, 0.22);
       margin-bottom: 3px;
     }
 
@@ -529,7 +636,7 @@ body {
     }
 
     .cellr {
-      border-left: 1px solid white;
+      border-left: 1px solid rgba(234, 240, 255, 0.14);
     }
   }
 }
@@ -546,10 +653,14 @@ body {
     transform: translateX(-50%);
     width: 100%;
     height: 300px;
-    background: rgba(245, 245, 245, 0.536);
+    background: $main-color;
     backdrop-filter: blur(3px);
-    border: 1px solid white;
+    border: 1px solid rgba(234, 240, 255, 0.14);
     border-radius: 15px;
+    box-shadow:
+      0 0 42px rgba(255, 43, 214, 0.1),
+      0 0 34px rgba(0, 245, 255, 0.06),
+      0 0 34px rgba(59, 130, 246, 0.06);
 
     h3 {
       margin: 30px auto;
@@ -563,11 +674,15 @@ body {
     }
 
     .close-Modal-minimodal {
-      background-color: lightblue;
+      background: linear-gradient(
+        135deg,
+        rgba(0, 245, 255, 0.35),
+        rgba(59, 130, 246, 0.22)
+      );
       width: 80px;
       align-self: center;
       margin-top: 10px;
-      color: black;
+      color: rgba(234, 240, 255, 0.92);
       font-weight: bold;
       display: flex;
       justify-content: center;
@@ -594,15 +709,15 @@ body {
   overflow-y: scroll;
 
   h2 {
-    color: black;
+    color: rgba(234, 240, 255, 0.92);
   }
 
   .row {
     display: flex;
     width: 100%;
-    background-color: black;
+    background: rgba(20, 26, 48, 0.72);
     justify-content: space-around;
-    border: 1px solid teal;
+    border: 1px solid rgba(0, 245, 255, 0.22);
     margin-bottom: 3px;
   }
 
@@ -617,12 +732,12 @@ body {
     align-items: center;
     line-break: anywhere;
     padding: 5px 0;
-    color: white;
+    color: rgba(234, 240, 255, 0.92);
   }
 
   .cellr {
-    border-left: 1px solid white;
-    color: white;
+    border-left: 1px solid rgba(234, 240, 255, 0.14);
+    color: rgba(234, 240, 255, 0.92);
   }
 }
 
@@ -634,11 +749,18 @@ body {
   transform: translateX(-50%);
   padding: 12px 16px;
   border-radius: 10px;
-  background-color: green;
-  color: lightgreen;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.22),
+    rgba(57, 255, 20, 0.16)
+  );
+  color: rgba(234, 240, 255, 0.92);
   font-weight: bold;
   letter-spacing: 0.5px;
-  box-shadow: 0 0 10px gray;
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 26px rgba(0, 245, 255, 0.12),
+    0 18px 55px rgba(0, 0, 0, 0.65);
   z-index: 10000000;
   max-width: min(90vw, 520px);
   text-align: center;
@@ -675,9 +797,9 @@ body {
 
 .dnd-slot {
   min-height: 90px;
-  border: 2px dashed $main-color;
+  border: 2px dashed rgba(0, 245, 255, 0.3);
   border-radius: 12px;
-  background: rgba(34, 53, 63, 0.08);
+  background: rgba(12, 16, 32, 0.42);
   padding: 10px;
   display: flex;
   gap: 8px;
@@ -685,7 +807,7 @@ body {
   align-content: flex-start;
   justify-content: center;
   font-weight: bold;
-  color: $main-color;
+  color: rgba(234, 240, 255, 0.7);
 
   &.correct {
     border-style: solid;
@@ -703,8 +825,8 @@ body {
 }
 
 .dnd-card {
-  background-color: rgb(253, 255, 240);
-  border: 1px solid black;
+  background: rgba(20, 26, 48, 0.72);
+  border: 1px solid rgba(234, 240, 255, 0.14);
   border-radius: 12px;
   padding: 10px 12px;
   min-width: 120px;
@@ -714,7 +836,11 @@ body {
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
-  box-shadow: 0 0 8px gray;
+  color: rgba(234, 240, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(234, 240, 255, 0.12),
+    0 0 24px rgba(0, 245, 255, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.55);
 
   &:active {
     cursor: grabbing;
